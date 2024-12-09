@@ -1,0 +1,29 @@
+template: a photo of $ind_ar1 $entity1
+entities:
+  list:
+    [
+      bicycle,
+      car,
+      motorcycle,
+      truck,
+      donut,
+      bench,
+      bird,
+      cat,
+      dog,
+      horse,
+      sheep,
+      cow,
+      elephant,
+      bear,
+      zebra,
+      giraffe,
+      banana,
+      apple,
+      broccoli,
+      carrot,
+      chair,
+      couch,
+      oven,
+      refrigerator,
+    ]

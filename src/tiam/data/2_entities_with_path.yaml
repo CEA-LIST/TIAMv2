@@ -1,0 +1,30 @@
+template: a photo of $ind_ar1 $entity1 and $ind_ar2 $entity2
+unique: [[entity1, entity2]]
+entities:
+  list:
+    [
+      bicycle,
+      car,
+      motorcycle,
+      truck,
+      donut,
+      bench,
+      bird,
+      cat,
+      dog,
+      horse,
+      sheep,
+      cow,
+      elephant,
+      bear,
+      zebra,
+      giraffe,
+      banana,
+      apple,
+      broccoli,
+      carrot,
+      chair,
+      couch,
+      oven,
+      refrigerator,
+    ]

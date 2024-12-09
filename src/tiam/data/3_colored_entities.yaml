@@ -1,0 +1,33 @@
+template: a photo of $ind_ar1 $adj1 $entity1, $ind_ar2 $adj2 $entity2 and $ind_ar3 $adj3 $entity3
+unique: [[entity1, entity2, entity3], [adj1, adj2, adj3]]
+entities:
+  list:
+    [
+      bicycle,
+      car,
+      motorcycle,
+      truck,
+      donut,
+      bench,
+      bird,
+      cat,
+      dog,
+      horse,
+      sheep,
+      cow,
+      elephant,
+      bear,
+      zebra,
+      giraffe,
+      banana,
+      apple,
+      broccoli,
+      carrot,
+      chair,
+      couch,
+      oven,
+      refrigerator,
+    ]
+
+adjs:
+  list: ["red", "yellow", "green", "blue", "purple", "pink"]
