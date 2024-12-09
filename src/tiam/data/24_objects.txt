@@ -1,0 +1,24 @@
+bicycle
+car
+motorcycle
+truck
+fire hydrant
+bench
+bird
+cat
+dog
+horse
+sheep
+cow
+elephant
+bear
+zebra
+giraffe
+banana
+apple
+broccoli
+carrot
+chair
+couch
+oven
+refrigerator

@@ -1,0 +1,12 @@
+template: a photo of $ind_ar1 $adj1 $entity1 and $ind_ar2 $adj2 $entity2
+unique: [[entity1, entity2], [adj1, adj2]]
+entities:
+  list:
+    [
+      car,
+      cat,
+      banana,
+    ]
+
+adjs:
+  list: ["red", "yellow" ]

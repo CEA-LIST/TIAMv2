@@ -1,0 +1,38 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "prompt": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "template": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "params": {
+      "entity1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "entity2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "labels_params": {
+      "entity1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "entity2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "adjs_params": {},
+    "adj_apply_on": {}
+  },
+  "homepage": "",
+  "license": ""
+}
