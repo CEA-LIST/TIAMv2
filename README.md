@@ -14,13 +14,66 @@
 >
 </details>
 
-## Usage
+## Install
 
 ```bash
 uv sync
 uv build
 tiam --help
+
+A terme pip install tiam
 ```
+
+## Usage
+
+### Create a Dataset
+
+Create a dataset based on the provided configuration file and save it to the specified path.
+
+```bash
+tiam create-dataset --config-path <CONFIG_PATH> --save-path <SAVE_PATH>
+```
+
+#### Options
+
+- `--config-path`: Path to the configuration file for creating the dataset.
+- `--save-path`: Path where the created dataset will be saved.
+
+### Compute TIAM Score
+
+Compute the TIAM score for the given images and dataset using the specified model.
+
+```bash
+tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path-or-url <DATASET_PATH_OR_URL> --model-path-or-url <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only
+```
+
+#### Options
+
+- `--save-dir`: Directory where the results will be saved.
+- `--image-dir`: Directory containing the images to be scored.
+- `--dataset-path-or-url`: Path or URL to the dataset.
+- `--model-path-or-url`: Path or URL to the model (default: "yolov8x-seg.pt").
+- `--batch-size`: Batch size for processing (default: 32).
+- `--detect-only`: Flag to indicate if only detection should be performed.
+
+### Load Score Data
+
+Load data from multiple JSON files, display it and save the results to the specified directory.
+
+```bash
+tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES>
+```
+
+#### Options
+
+- `--save-dir`: Directory where the results will be saved.
+- `--path-to-json-files`: Path to the directory containing JSON files to be loaded.
+
+## Commands
+
+- `create-dataset`: Create a dataset based on the provided configuration file and save it to the specified path.
+- `score`: Compute the TIAM score for the given images and dataset using the specified model.
+- `load-score`: Load data from multiple JSON files, display it and save the results to the specified directory.
 
 ## Usage Example
 
