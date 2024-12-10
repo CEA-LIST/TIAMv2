@@ -1,16 +1,15 @@
-from typing import Optional
-import typer
-from pathlib import Path
-from .tiam_per_prompt import TIAM_per_prompt, TIAMScore
-from datasets import load_dataset, load_from_disk
-from .utils import get_images
-from tqdm import tqdm
 import ast
-
-import re
 import logging
-import pandas as pd
 import tarfile
+from pathlib import Path
+from typing import Optional
+
+import pandas as pd
+from datasets import load_dataset, load_from_disk
+from rich.progress import track
+
+from .tiam_per_prompt import TIAM_per_prompt
+from .utils import get_images
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +46,6 @@ def aggregate_dicts(series):
 def load_data_from_multiple_files(
     path_to_json_files,
     save_dir: Optional[str] = None,
-    multi_template_style_prompt: bool = False,
     files=None,
 ):
     """Load the data from the json files and save the results in a json file and markdown files
@@ -57,17 +55,11 @@ def load_data_from_multiple_files(
         save_dir (Optional[str], optional): directory to save the results. Defaults to None.
     """
 
-    multi_template_style_prompt = multi_template_style_prompt
     path_to_json_files = Path(path_to_json_files)
     if not path_to_json_files.is_dir():
         raise ValueError("path_to_json_files must be a directory")
-    # get all the json files
     if files is None:
         files = list(path_to_json_files.glob("*.json"))
-    # load and concat all the json files
-    # résultats par type de prompt
-    # gestion si pas le même nombre d'image
-    # gestion des seeds s'il y en a
     type_data = {}
 
     for f in files:
@@ -89,14 +81,30 @@ def load_data_from_multiple_files(
             print(f"Error with {f}: {e}")
     # create conctenate dataframe per type of prompt
     df_resume = {"color": [], "wo_color": []}
+
     for (colored, n_entities), dfs in type_data.items():
         # check if df same number of seeds
         # if not low execution [only tiam score]
         n_images = None
         available_seeds = None
+        available_confidence = None
         seeds_equal = True
         n_images_equal = True
         for df in dfs:
+            # check if tiam per seed is available
+            if available_confidence is None:
+                available_confidence = df["conf"].unique()
+            else:
+                # keep common confidence
+                available_confidence = list(
+                    set(available_confidence).intersection(df["conf"].unique())
+                )
+
+            if "tiam_per_seed" not in df.columns:
+                seeds_equal = False
+                n_images_equal = False
+                break
+
             seeds = df.loc[0, "tiam_per_seed"].keys()
             if n_images is None:
                 n_images = len(seeds)
@@ -104,13 +112,13 @@ def load_data_from_multiple_files(
                 available_seeds = sorted([int(s.split("_")[-1]) for s in seeds])
             if n_images != len(seeds):
                 logger.warning(
-                    f"The number of images per prompt is not consistent. The score will be computed without considering the seeds."
+                    "The number of images per prompt is not consistent. The score will be computed without considering the seeds."
                 )
                 n_images_equal = False
                 break
             if available_seeds != sorted([int(s.split("_")[-1]) for s in seeds]):
                 logger.warning(
-                    f"The seeds are not consistent. The score will be computed without considering the seeds."
+                    "The seeds are not consistent. The score will be computed without considering the seeds."
                 )
                 seeds_equal = False
                 break
@@ -130,7 +138,9 @@ def load_data_from_multiple_files(
 
             dfs = [df[keep_columns] for df in dfs]
             df_concat = pd.concat(dfs, ignore_index=True)
-
+        df_concat["n_prompt"] = 1
+        # filter on common confidence
+        df_concat = df_concat[df_concat["conf"].isin(available_confidence)]
         df_concat = (
             df_concat.groupby("conf")
             .agg(get_adequate_processing(n_images_equal, seeds_equal, colored))
@@ -154,23 +164,68 @@ def load_data_from_multiple_files(
 
     # Compute TIAM score without regards on the number of entities
     # weighted compute on the number of prompt
+
+    # rechecker que les mêmes seeds et les mêmes confidences utilisés
+
     if len(df_resume["color"]) > 1:
         per_seed_available = True
-
+        available_confidence = None
+        available_seeds = None
         for df, n_entities in df_resume["color"]:
+            if available_confidence is None:
+                available_confidence = df["conf"].unique()
+            else:
+                # keep common confidence
+                available_confidence = list(
+                    set(available_confidence).intersection(df["conf"].unique())
+                )
             if "tiam_per_seed" not in df.columns:
                 per_seed_available = False
-                break
+            else:
+                if available_seeds is None:
+                    available_seeds = sorted(
+                        [
+                            int(s.split("_")[-1])
+                            for s in df.loc[0, "tiam_per_seed"].keys()
+                        ]
+                    )
+                if available_seeds != sorted(
+                    [int(s.split("_")[-1]) for s in df.loc[0, "tiam_per_seed"].keys()]
+                ):
+                    per_seed_available = False
+
         df_weighted = calculate_weighted_metrics(
             df, color=True, per_seed=per_seed_available
         )
         df_weighted.to_json(save_dir / "prompt_weighted_tiam_score_color.json")
 
     if len(df_resume["wo_color"]) > 1:
+        available_confidence = None
+        available_seeds = None
+        per_seed_available = True
         for df, n_entities in df_resume["wo_color"]:
+            if available_confidence is None:
+                available_confidence = df["conf"].unique()
+            else:
+                # keep common confidence
+                available_confidence = list(
+                    set(available_confidence).intersection(df["conf"].unique())
+                )
             if "tiam_per_seed" not in df.columns:
                 per_seed_available = False
-                break
+            else:
+                if available_seeds is None:
+                    available_seeds = sorted(
+                        [
+                            int(s.split("_")[-1])
+                            for s in df.loc[0, "tiam_per_seed"].keys()
+                        ]
+                    )
+                if available_seeds != sorted(
+                    [int(s.split("_")[-1]) for s in df.loc[0, "tiam_per_seed"].keys()]
+                ):
+                    per_seed_available = False
+
             df_weighted = calculate_weighted_metrics(
                 df, color=False, per_seed=per_seed_available
             )
@@ -230,7 +285,7 @@ def calculate_weighted_metrics(df, color=False, per_seed=True):
     # Group and calculate metrics
     grouped = (
         pd.DataFrame(weighted)
-        .groupby(df["confidence"])
+        .groupby(df["conf"])
         .agg({k: "sum" for k in weighted.keys()})
     )
 
@@ -265,7 +320,7 @@ def calculate_weighted_metrics(df, color=False, per_seed=True):
 def params_to_detect(row):
     entities = list(row["labels_params"].values())
     if len(row["adjs_params"]) > 0:
-        adjs = list(row["adjs_params"].values())
+        adjs = list(row["adj_apply_on"].keys())
         color_classes = {}
         for adj in adjs:
             color_classes[row["labels_params"][row["adj_apply_on"][adj]]] = row[
@@ -277,7 +332,12 @@ def params_to_detect(row):
 
 
 def compute_tiam_score(
-    save_dir, dataset_path, image_dir, model_path_or_url="yolov8x-seg.pt", batch_size=32
+    save_dir,
+    dataset_path,
+    image_dir,
+    model_path_or_url="yolov8x-seg.pt",
+    batch_size=32,
+    detect_only=False,
 ):
     images_dir = Path(image_dir)
     save_dir = Path(save_dir)
@@ -306,10 +366,8 @@ def compute_tiam_score(
         confs_for_score=[0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95],
     )
 
-    print(all_file_names)
-
     unavailable_prompts = []
-    for row in tqdm(iter(dataset)):
+    for row in track(iter(dataset), total=len(dataset)):
         prompt = row["prompt"]
         images, seeds = get_images(
             prompt=prompt,
@@ -332,7 +390,8 @@ def compute_tiam_score(
         logger.info(
             f"{len(unavailable_prompts)} prompts were not found in the images folder. List of prompts :{unavailable_prompts}"
         )
-    load_data_from_multiple_files(
-        path_to_json_files=save_dir_per_prompt,
-        save_dir=save_dir,
-    )
+    if not detect_only:
+        load_data_from_multiple_files(
+            path_to_json_files=save_dir_per_prompt,
+            save_dir=save_dir,
+        )

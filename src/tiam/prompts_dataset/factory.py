@@ -1,5 +1,6 @@
 import itertools
 from typing import List
+
 import nltk
 
 try:

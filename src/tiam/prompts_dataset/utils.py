@@ -1,9 +1,9 @@
+from pathlib import PosixPath
 from string import Template
-from pathlib import Path, PosixPath
-from omegaconf import OmegaConf
-from tqdm import tqdm
 
 from datasets import Dataset
+from omegaconf import OmegaConf
+from tqdm import tqdm
 
 from .factory import (
     all_combinations,

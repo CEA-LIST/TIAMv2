@@ -1,11 +1,12 @@
-from typing import List
-import torch
-import numpy as np
-import re
-import logging
-from PIL import Image
 import io
+import logging
+import re
 from pathlib import Path
+from typing import List
+
+import numpy as np
+import torch
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
