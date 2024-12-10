@@ -1,0 +1,64 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "prompt": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "template": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "params": {
+      "adj1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "adj2": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "entity1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "entity2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "labels_params": {
+      "entity1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "entity2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "adjs_params": {
+      "adj1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "adj2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "adj_apply_on": {
+      "adj1": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "adj2": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
