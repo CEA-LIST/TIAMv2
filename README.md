@@ -16,7 +16,7 @@
 
 ## Usage
 
-```
+```bash
 uv sync
 uv build
 tiam --help
