@@ -26,6 +26,16 @@ A terme pip install tiam
 
 ## Usage
 
+In one folder
+
+```bash
+<SAVE DIR>
+- prompt.csv or datasets folder or load from hgging face with url
+- images folder or tarball
+
+tiam score --save-dir SAVE_DIR 
+```
+
 ### Create a Dataset
 
 Create a dataset based on the provided configuration file and save it to the specified path.

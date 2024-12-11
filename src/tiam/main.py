@@ -28,6 +28,11 @@ def create_dataset(
     dataset.save_to_disk(save_path)
 
 
+# todo prompt: seed : path image
+# todo prompt: [path image]
+# rodo: prompt cqv
+
+
 @app.command(
     help="Compute the TIAM score for the given images and dataset using the specified model."
 )
@@ -37,10 +42,10 @@ def score(
     ],
     image_dir: Annotated[
         Path, typer.Option(help="Directory containing the images to be scored")
-    ],
+    ] = ...,  # todo
     dataset_path_or_url: Annotated[
         Path, typer.Option(help="Path or URL to the dataset")
-    ],
+    ] = ...,  # todo
     model_path_or_url: Annotated[
         str, typer.Option(help="Path or URL to the model")
     ] = "yolov8x-seg.pt",

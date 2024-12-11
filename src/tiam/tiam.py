@@ -339,6 +339,11 @@ def compute_tiam_score(
     batch_size=32,
     detect_only=False,
 ):
+
+    #! Convertir un csv de prompt en dataset pour itérer dessus
+    #! gérer le chargement des images avec un json prompt : [chemin image]
+    #! ou prompt : {seed : chemin image}
+
     images_dir = Path(image_dir)
     save_dir = Path(save_dir)
     save_dir_per_prompt = save_dir / "tiam_score_per_prompt"
