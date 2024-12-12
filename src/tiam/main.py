@@ -4,7 +4,7 @@ import typer
 from typing_extensions import Annotated
 
 from .prompts_dataset.utils import create_dataset as pipeline_dataset
-from .tiam import compute_tiam_score, load_data_from_multiple_files
+from .tiam import compute_tiam_score, csv2dataset, load_data_from_multiple_files
 
 app = typer.Typer(
     name="tiam",
@@ -28,11 +28,6 @@ def create_dataset(
     dataset.save_to_disk(save_path)
 
 
-# todo prompt: seed : path image
-# todo prompt: [path image]
-# rodo: prompt cqv
-
-
 @app.command(
     help="Compute the TIAM score for the given images and dataset using the specified model."
 )
@@ -41,10 +36,13 @@ def score(
         Path, typer.Option(help="Directory where the results will be saved")
     ],
     image_dir: Annotated[
-        Path, typer.Option(help="Directory containing the images to be scored")
+        Path,
+        typer.Option(
+            help="Directory containing the images to be scored or json files with prompts and path (and seeds)"
+        ),
     ] = ...,  # todo
     dataset_path_or_url: Annotated[
-        Path, typer.Option(help="Path or URL to the dataset")
+        Path, typer.Option(help="Path or URL to the dataset or CSV file")
     ] = ...,  # todo
     model_path_or_url: Annotated[
         str, typer.Option(help="Path or URL to the model")
@@ -81,3 +79,19 @@ def load_score(
         save_dir=save_dir,
         path_to_json_files=path_to_json_files,
     )
+
+
+@app.command(help="CSV prompts to Dataset")
+def csv_to_dataset(
+    csv_path: Annotated[
+        Path,
+        typer.Option(help="Path to the CSV file containing the prompts"),
+    ],
+    save_path: Annotated[
+        Path, typer.Option(help="Path where the created dataset will be saved")
+    ] = None,
+):
+    dataset = csv2dataset(csv_path)
+    print(dataset)
+    for row in iter(dataset):
+        print(row)

@@ -1,15 +1,17 @@
 import ast
+import json
 import logging
+import re
 import tarfile
 from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from datasets import load_dataset, load_from_disk
+from datasets import Dataset, load_dataset, load_from_disk
 from rich.progress import track
 
 from .tiam_per_prompt import TIAM_per_prompt
-from .utils import get_images
+from .utils import get_images, get_images_from_json
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +37,9 @@ def get_adequate_processing(n_images_equal, seeds_equal, colored):
 
 
 def aggregate_dicts(series):
-    # Convert list of dicts to DataFrame for easier averaging
     df_dict = pd.DataFrame(series.tolist())
     # Calculate mean for each seed
     means = df_dict.mean()
-    # Convert back to dictionary
     return means.to_dict()
 
 
@@ -331,6 +331,112 @@ def params_to_detect(row):
     return entities, color_classes
 
 
+def clean_data(row):
+    for key in ["labels_params", "adjs_params", "adj_apply_on"]:
+        row[key] = {k: v for k, v in row[key].items() if v}
+    return row
+
+
+def validate_row(row, entity_cols, adj_cols):
+    # Check for gaps in entities
+    has_entity = False
+    for i, col in enumerate(entity_cols):
+        if pd.notna(row[col]):
+            has_entity = True
+        elif (
+            has_entity
+            and i < len(entity_cols) - 1
+            and pd.notna(row[entity_cols[i + 1]])
+        ):
+            raise ValueError(f"Gap detected in entities: {dict(row)}")
+
+    # Check adjective correspondence
+    for i, adj_col in enumerate(adj_cols):
+        if pd.notna(row[adj_col]):
+            if i >= len(entity_cols) or pd.isna(row[entity_cols[i]]):
+                raise ValueError(f"Adjective without corresponding entity: {dict(row)}")
+
+    return has_entity
+
+
+def csv2dataset(csv_path):
+    df = pd.read_csv(csv_path)
+
+    # Validate columns
+    entity_cols = sorted([col for col in df.columns if col.startswith("entity")])
+    adj_cols = sorted([col for col in df.columns if col.startswith("adj")])
+
+    # Check for sequential numbering
+    def validate_sequential_cols(cols):
+        numbers = [
+            int(re.findall(r"\d+", col)[0]) for col in cols if re.findall(r"\d+", col)
+        ]
+        if not numbers:
+            return True
+        return sorted(numbers) == list(range(1, len(numbers) + 1))
+
+    if not validate_sequential_cols(entity_cols) or not validate_sequential_cols(
+        adj_cols
+    ):
+        raise ValueError(
+            "Columns must be sequentially numbered (entity1, entity2, etc.)"
+        )
+
+    # Filter and validate rows
+    valid_rows = []
+    for idx, row in df.iterrows():
+        try:
+            if validate_row(row, entity_cols, adj_cols):
+                valid_rows.append(row)
+        except ValueError as e:
+            raise ValueError(f"Error in row {idx}: {str(e)}")
+
+    if not valid_rows:
+        raise ValueError("No valid rows found in CSV")
+
+    processed_data = []
+
+    for row in valid_rows:
+        # Extract entities
+        entities = {
+            f"entity{i+1}": str(row[col])
+            for i, col in enumerate(entity_cols)
+            if pd.notna(row[col])
+        }
+
+        # Extract adjectives
+        adjs = {
+            f"adj{i+1}": str(row[col])
+            for i, col in enumerate(adj_cols)
+            if pd.notna(row[col])
+        }
+
+        # Create adj_apply_on mapping with empty values if no adjective exists
+        adj_apply_on = {}
+        for i in range(len(entities)):
+            adj_key = f"adj{i+1}"
+            if adj_key in adjs and adjs[adj_key]:
+                adj_apply_on[adj_key] = f"entity{i+1}"
+            else:
+                adj_apply_on[adj_key] = ""
+
+        # Fill empty adjectives for remaining entities
+        for i in range(len(entities)):
+            adj_key = f"adj{i+1}"
+            if adj_key not in adjs:
+                adjs[adj_key] = ""
+
+        processed_row = {
+            "prompt": row["prompt"],
+            "labels_params": entities,
+            "adjs_params": adjs,
+            "adj_apply_on": adj_apply_on,
+        }
+
+        processed_data.append(processed_row)
+    return Dataset.from_list(processed_data)
+
+
 def compute_tiam_score(
     save_dir,
     dataset_path,
@@ -340,7 +446,6 @@ def compute_tiam_score(
     detect_only=False,
 ):
 
-    #! Convertir un csv de prompt en dataset pour itérer dessus
     #! gérer le chargement des images avec un json prompt : [chemin image]
     #! ou prompt : {seed : chemin image}
 
@@ -349,6 +454,7 @@ def compute_tiam_score(
     save_dir_per_prompt = save_dir / "tiam_score_per_prompt"
     dataset_path = Path(dataset_path)
 
+    json_files = None
     if images_dir.is_dir():
         all_file_names = [
             f for f in images_dir.iterdir() if f.suffix in ALLOWED_IMAGE_FORMAT
@@ -358,9 +464,17 @@ def compute_tiam_score(
         with tarfile.open(images_dir, "r") as tar:
             tar = tarfile.open(images_dir, "r")
             all_file_names = [tar.getnames()]
+    elif images_dir.suffix == ".json":
+        with open(images_dir, "r") as f:
+            json_files = json.load(f)
+        # process the data
+
+        tar = None
 
     if dataset_path.is_dir():
         dataset = load_from_disk(dataset_path)  # load from disk
+    elif dataset_path.suffix == ".csv":
+        dataset = csv2dataset(dataset_path)
     else:
         dataset = load_dataset(str(dataset_path))  # load from huggingface
 
@@ -373,13 +487,16 @@ def compute_tiam_score(
 
     unavailable_prompts = []
     for row in track(iter(dataset), total=len(dataset)):
+        row = clean_data(row)
+
         prompt = row["prompt"]
-        images, seeds = get_images(
-            prompt=prompt,
-            save_dir_images=image_dir,
-            all_file_names=all_file_names,
-            tar=tar,
-        )
+
+        if json_files is not None:
+            images, seeds = get_images_from_json(json_data=json_files, prompt=prompt)
+        else:
+            images, seeds = get_images(
+                prompt=prompt, all_file_names=all_file_names, tar=tar
+            )
         if images is None:
             unavailable_prompts.append(prompt)
             continue

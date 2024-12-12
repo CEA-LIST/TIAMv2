@@ -2,7 +2,7 @@ import io
 import logging
 import re
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -89,14 +89,61 @@ def load_images(files_to_load, tar=None):
     return pil_to_torch(images)
 
 
-def get_images(prompt, all_file_names, save_dir_images=None, tar=None):
+def get_images_from_json(
+    prompt: str, json_data: Dict
+) -> Tuple[Optional[List[str]], Optional[List[int]]]:
+    """
+    Get images and seeds for a prompt from JSON data.
+
+    Args:
+        prompt: str - The prompt to search for
+        json_data: Dict - JSON with {prompt: [paths]} or {prompt: {seed: path}}
+
+    Returns:
+        Tuple[Optional[List[str]], Optional[List[int]]] - (image_paths, seeds) or (None, None)
+    """
+    if prompt not in json_data:
+        return None, None
+
+    value = json_data[prompt]
+    processed_prompt = "_".join(prompt.split())
+
+    # Handle dict format (seed: path)
+    if isinstance(value, dict):
+        sorted_items = sorted(value.items(), key=lambda x: int(x[0]))
+        images = load_images([path for _, path in sorted_items])
+        seeds = [int(seed) for seed, _ in sorted_items]
+        return images, seeds
+
+    # Handle list format
+    if isinstance(value, list):
+        images = []
+        seeds = []
+
+        # Try to extract seeds from paths
+        for path in value:
+            path_obj = Path(path)
+            seed_match = re.search(rf".*{processed_prompt}_(\d+).*", path_obj.stem)
+
+            images.append(path)
+            if seed_match:
+                seeds.append(int(seed_match.group(1)))
+            else:
+                seeds = None
+                break
+        images = load_images(images)
+        return images, seeds
+
+    return None, None
+
+
+def get_images(prompt, all_file_names, tar=None):
     """
     Get images matching a prompt from either a tar file or directory.
 
     Args:
         prompt: str - The prompt to search for in filenames
         all_file_names: List[Path/str] - List of filenames from tar or directory
-        save_dir_images: Optional[Path] - Directory to save extracted images
         tar: Optional[TarFile] - Tar archive containing images
 
     Returns:
@@ -146,47 +193,3 @@ def get_images(prompt, all_file_names, save_dir_images=None, tar=None):
 
     images = load_images(files_to_load, tar)
     return images, seeds
-
-
-# def get_images(prompt, all_file_names, save_dir_images=None, tar=None):
-
-#     processed_prompt = "_".join(prompt.split())
-#     seeds = None
-#     if processed_prompt in all_file_names:
-#         files_with_prompt = [
-#             f for f in all_file_names if f.stem.startswith(processed_prompt)
-#         ]
-#         avaiable_seed = True
-#         for file in files_with_prompt:
-#             if not re.match(rf"{processed_prompt}_\d+", file.stem):
-#                 avaiable_seed = False
-#                 logger.warning(
-#                     f"File '{file}' does not respect the required format. "
-#                     f"The format should be '{processed_prompt}_<seed_number>'. "
-#                     f"Fake seed will be used, do not consider the score per seed."
-#                 )
-#                 break
-#         if avaiable_seed:
-#             seeds = [int(f.stem.split("_")[-1]) for f in files_with_prompt]
-#             # sort files by seed
-#             files_to_load = [f for _, f in sorted(zip(seeds, files_with_prompt))]
-#         else:
-#             seeds = None
-#             files_to_load = files_with_prompt
-
-#         images = load_images(files_to_load, save_dir_images, tar)
-#         return images, seeds
-
-
-# def cure_data(self, row, batch_size):
-#     #!todo faire evluer ca que pour les objets pour l'instant
-#     if self.multi_template_style_prompt and batch_size > 1:
-#         raise ValueError("batch size must be 1 if multi_template_style_prompt dataset")
-#     if "object3" in row["labels_params"] and row["labels_params"]["object3"] == [""]:
-#         row["labels_params"].pop("object3")
-#         row["params"].pop("object3")
-#     return row
-
-
-# if self.multi_template_style_prompt:
-#     batch = self.cure_data(batch, batch_size)

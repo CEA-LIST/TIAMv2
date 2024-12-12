@@ -24,6 +24,11 @@ tiam --help
 A terme pip install tiam
 ```
 
+## Note
+
+entity must be different
+adj for each entity if adj
+
 ## Usage
 
 In one folder
@@ -61,7 +66,7 @@ tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path-or-url <
 
 - `--save-dir`: Directory where the results will be saved.
 - `--image-dir`: Directory containing the images to be scored.
-- `--dataset-path-or-url`: Path or URL to the dataset.
+- `--dataset-path-or-url`: Path or URL to the dataset or csv
 - `--model-path-or-url`: Path or URL to the model (default: "yolov8x-seg.pt").
 - `--batch-size`: Batch size for processing (default: 32).
 - `--detect-only`: Flag to indicate if only detection should be performed.
@@ -95,6 +100,15 @@ tiam create-dataset --config-path src/tiam/data/2_colored_entities.yaml --save-p
 tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url tests/data/2_entities/dataset_300_samples
 
 tiam load-score --save-dir tests/data/load_score/images_and_seed_consistent --path-to-json-files tests/data/load_score/images_and_seed_consistent/tiam_score_per_prompt
+
+
+
+# tester les jsons
+
+score    --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_with_list.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
+score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_per_seed.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
+
+
 ```
 
 ## TODO

@@ -87,3 +87,49 @@ def test_load_score():
         ],
     )
     assert result.exit_code == 0
+
+
+def test_with_csv():
+    result = runner.invoke(
+        app,
+        [
+            "score",
+            "--save-dir",
+            "tests/data/2_entities",
+            "--image-dir",
+            "tests/data/2_entities/images",
+            "--dataset-path-or-url",
+            "tests/data/2_entities/prompts.csv",
+        ],
+    )
+    assert result.exit_code == 0
+
+
+def test_with_images_in_json():
+    result = runner.invoke(
+        app,
+        [
+            "score",
+            "--save-dir",
+            "tests/data/2_entities",
+            "--image-dir",
+            "tests/data/2_entities/json_with_list.json",
+            "--dataset-path-or-url",
+            "tests/data/2_entities/prompts.csv",
+        ],
+    )
+    assert result.exit_code == 0
+
+    result = runner.invoke(
+        app,
+        [
+            "score",
+            "--save-dir",
+            "tests/data/2_entities",
+            "--image-dir",
+            "tests/data/2_entities/json_per_seed.json",
+            "--dataset-path-or-url",
+            "tests/data/2_entities/prompts.csv",
+        ],
+    )
+    assert result.exit_code == 0
