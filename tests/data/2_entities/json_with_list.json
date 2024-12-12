@@ -1,0 +1,20 @@
+{
+    "a photo of a giraffe and a bear": [
+        "tests/data/2_entities/images/a_photo_of_a_giraffe_and_a_bear_0.png",
+        "tests/data/2_entities/images/a_photo_of_a_giraffe_and_a_bear_1.png",
+        "tests/data/2_entities/images/a_photo_of_a_giraffe_and_a_bear_2.png",
+        "tests/data/2_entities/images/a_photo_of_a_giraffe_and_a_bear_3.png"
+    ],
+    "a photo of a zebra and a motorcycle": [
+        "tests/data/2_entities/images/a_photo_of_a_zebra_and_a_motorcycle_0.png",
+        "tests/data/2_entities/images/a_photo_of_a_zebra_and_a_motorcycle_1.png",
+        "tests/data/2_entities/images/a_photo_of_a_zebra_and_a_motorcycle_2.png",
+        "tests/data/2_entities/images/a_photo_of_a_zebra_and_a_motorcycle_3.png"
+    ],
+    "a photo of an oven and a truck": [
+        "tests/data/2_entities/images/a_photo_of_an_oven_and_a_truck_0.png",
+        "tests/data/2_entities/images/a_photo_of_an_oven_and_a_truck_1.png",
+        "tests/data/2_entities/images/a_photo_of_an_oven_and_a_truck_2.png",
+        "tests/data/2_entities/images/a_photo_of_an_oven_and_a_truck_3.png"
+    ]
+}

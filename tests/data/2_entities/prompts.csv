@@ -1,0 +1,7 @@
+prompt,entity1,entity2,entity3,adj1,adj2,adj3
+"a photo of a tall giraffe and a brown bear",giraffe,bear,,tall,brown,
+"a photo of a striped zebra and a red motorcycle",zebra,motorcycle,,striped,red,
+"a photo of a white oven and a rusty truck",oven,truck,,white,rusty,
+"a photo of a giraffe and a bear",giraffe,bear,,,,
+"a photo of a zebra and a motorcycle",zebra,motorcycle,,,,
+"a photo of an oven and a truck",oven,truck,,,,
