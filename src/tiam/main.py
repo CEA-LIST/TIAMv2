@@ -27,6 +27,27 @@ def create_dataset(
     dataset = pipeline_dataset(config_file)
     dataset.save_to_disk(save_dir)
 
+    # save explicit prompt in a text file
+    with open(Path(save_dir).joinpath("prompts.txt"), 'w') as f:
+        for line in dataset['prompt']:
+            f.write(f"{line}\n")
+    # save the corresponding CSV file
+    with open(Path(save_dir).joinpath("prompts.csv"), 'w') as f:
+        first_line="prompt,"
+        for e in dataset['labels_params'][0].keys():
+            first_line=first_line+e+','
+        for a in dataset['adjs_params'][0].keys():
+            first_line=first_line+a+','
+        f.write(f"{first_line[:-1]}\n")
+        for i in range(dataset.num_rows):
+            line='"'+dataset['prompt'][i]+'",'
+            for e in dataset['labels_params'][i].keys():
+                line=line+dataset['labels_params'][i][e]+','
+            for a in dataset['adjs_params'][i].keys():
+                line=line+dataset['adjs_params'][i][a]+','
+            f.write(f"{line}\n") # FIXME on garde dernière virgule?? sinon {line[:-1]}
+
+
 
 @app.command(
     help="Compute the TIAM score for the given images and dataset using the specified model."
