@@ -16,16 +16,16 @@ app = typer.Typer(
     help="Create a dataset based on the provided configuration file and save it to the specified path."
 )
 def create_dataset(
-    config_path: Annotated[
+    config_file: Annotated[
         Path,
-        typer.Option(help="Path to the configuration file for creating the dataset"),
+        typer.Option(help="configuration file (xxx.yaml) to create the prompt dataset"),
     ],
-    save_path: Annotated[
-        Path, typer.Option(help="Path where the created dataset will be saved")
+    save_dir: Annotated[
+        Path, typer.Option(help="directory to save the created prompt dataset")
     ],
 ):
-    dataset = pipeline_dataset(config_path)
-    dataset.save_to_disk(save_path)
+    dataset = pipeline_dataset(config_file)
+    dataset.save_to_disk(save_dir)
 
 
 @app.command(
@@ -38,12 +38,12 @@ def score(
     image_dir: Annotated[
         Path,
         typer.Option(
-            help="Directory containing the images to be scored or json files with prompts and path (and seeds)"
+            help="Directory containing the synthetic images or json files with prompts and path (and seeds)"
         ),
-    ] = ...,  # todo
+    ] = Path("/dev/null"),  # impossible default path
     dataset_path_or_url: Annotated[
         Path, typer.Option(help="Path or URL to the dataset or CSV file")
-    ] = ...,  # todo
+    ] = Path("/dev/null"),  # impossible default path
     model_path_or_url: Annotated[
         str, typer.Option(help="Path or URL to the model")
     ] = "yolov8x-seg.pt",
@@ -53,6 +53,11 @@ def score(
         typer.Option(help="Flag to indicate if only detection should be performed"),
     ] = False,
 ):
+    if image_dir==Path("/dev/null"):
+        image_dir=Path(save_dir).joinpath("images/")
+    if dataset_path_or_url==Path("/dev/null"):
+        dataset_path_or_url=Path(save_dir).joinpath("dataset_300_samples/")
+ 
     compute_tiam_score(
         save_dir=save_dir,
         dataset_path=dataset_path_or_url,
@@ -87,7 +92,7 @@ def csv_to_dataset(
         Path,
         typer.Option(help="Path to the CSV file containing the prompts"),
     ],
-    save_path: Annotated[
+    save_dir: Annotated[
         Path, typer.Option(help="Path where the created dataset will be saved")
     ] = None,
 ):

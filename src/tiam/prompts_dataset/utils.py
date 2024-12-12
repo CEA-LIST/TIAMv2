@@ -118,6 +118,9 @@ def generate_dataset(
 
 
 def create_dataset(config):
+    """
+    config: configuration file (YAML)
+    """
     if isinstance(config, PosixPath):
         config = OmegaConf.load(config)
 

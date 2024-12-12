@@ -15,44 +15,59 @@
 </details>
 
 ## Install
+Install with [uv](https://docs.astral.sh/uv//), that itself can be [installed with one line](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```bash
 uv sync
 uv build
+source .venv/bin/activate
 tiam --help
+```
+Future works will allow to install with `pip`
 
-A terme pip install tiam
+## Usage
+Each generative model whose performance is to be estimated has its folder `SAVE_DIR` with the following strucure:
+
+```bash
+<SAVE_DIR>
+ |-- prompt.csv
+ |-- images/
+     |-- the_first_prompt_with_objects_and_attributes.0.png
+     |-- the_first_prompt_with_objects_and_attributes.1.png
+     |-- the_first_prompt_with_objects_and_attributes.2.png
+         (...)
+     |-- the_first_prompt_with_objects_and_attributes.15.png
+     |-- the_second_prompt_with_objects_and_attributes.0.png
+         (...)
+         (...)
+     |-- the_last_prompt_with_objects_and_attributes.15.png
+```
+The directory `images/` contains the synthetic images created by your generative model. There are 16 images per prompt, each having a filename relating it to the prompt used to generate it. The file `prompt.csv` contain the prompts with a format explained [here](TODO). A sample of such file is provided for [2 object](tests/data/2_entities/prompts.csv).
+
+Then, get the perfomances with:
+```
+tiam score --save-dir SAVE_DIR 
 ```
 
-## Note
+## Detailled usage
+
+### Creating the prompt.csv file
 
 entity must be different
 adj for each entity if adj
-
-## Usage
-
-In one folder
-
-```bash
-<SAVE DIR>
-- prompt.csv or datasets folder or load from hgging face with url
-- images folder or tarball
-
-tiam score --save-dir SAVE_DIR 
-```
 
 ### Create a Dataset
 
 Create a dataset based on the provided configuration file and save it to the specified path.
 
 ```bash
-tiam create-dataset --config-path <CONFIG_PATH> --save-path <SAVE_PATH>
+tiam create-dataset --config-file <config.yaml> --save-dir <SAVE_DIR>
 ```
 
 #### Options
 
-- `--config-path`: Path to the configuration file for creating the dataset.
-- `--save-path`: Path where the created dataset will be saved.
+- `--config-file`: Path to the configuration file for creating the dataset.
+- `--save-dir`: folder to save the created prompt dataset.
 
 ### Compute TIAM Score
 
@@ -92,10 +107,10 @@ tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES>
 
 ## Usage Example
 
-Exmples command from the tests
+Examples command from the tests
 
 ```bash
-tiam create-dataset --config-path src/tiam/data/2_colored_entities.yaml --save-path tests/data/2_colored_entities_dataset
+tiam create-dataset --config-file src/tiam/data/2_colored_entities.yaml --save-dir tests/data/2_colored_entities_dataset
 
 tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url tests/data/2_entities/dataset_300_samples
 
@@ -103,7 +118,7 @@ tiam load-score --save-dir tests/data/load_score/images_and_seed_consistent --pa
 
 
 
-# tester les jsons
+# with JSON files
 
 score    --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_with_list.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
 score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_per_seed.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
