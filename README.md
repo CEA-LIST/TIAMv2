@@ -87,9 +87,10 @@ dataset = load_dataset("Paulgrim/2_entities")
 ```
 To save them locally and get human readable `prompts.txt`:
 ```python
+dataset['dataset']=dataset.pop('train')
 dataset.save_to_disk('bench/2_entities')
 
-with open("prompts_2_entities.txt", "w") as f:
+with open("bench/2_entities/prompts.txt", "w") as f:
     for line in dataset['dataset']["prompt"]:
         f.write(f"{line}\n")
 ```
