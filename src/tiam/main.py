@@ -105,10 +105,15 @@ def load_score(
         Path,
         typer.Option(help="Path to the directory containing JSON files to be loaded"),
     ],
+    disp_precision: Annotated[
+        int,
+        typer.Option(help="Round the displayed results to 1e-disp_precision. Do not round if disp_precision<=0. Default = 3"),
+    ] = 3,
 ):
     load_data_from_multiple_files(
         save_dir=save_dir,
         path_to_json_files=path_to_json_files,
+        precision=disp_precision,
     )
 
 

@@ -47,12 +47,14 @@ def load_data_from_multiple_files(
     path_to_json_files,
     save_dir: Optional[str] = None,
     files=None,
+    precision: Optional[int]=3,
 ):
     """Load the data from the json files and save the results in a json file and markdown files
 
     Args:
         path_to_json_files (str): path to the json files
         save_dir (Optional[str], optional): directory to save the results. Defaults to None.
+        precision (Optional[int]): round the final score (displayed) to 10^(-precision). Do not round if precision <=0. Default: precison = 3 (round to 1e-3)
     """
 
     path_to_json_files = Path(path_to_json_files)
@@ -148,6 +150,16 @@ def load_data_from_multiple_files(
         )
         # average number of class detected per image
         df_concat["n_class_detected"] = df_concat["n_class_detected"] * n_entities
+        # round the scores
+        if precision>0:
+            for i, r in df_concat.iterrows():
+                df_concat.at[i,'tiam'] = round(r['tiam'], precision)
+                df_concat.at[i,'count_order'] = {k : round(v,precision) for k,v in r['count_order'].items()}
+                df_concat.at[i,'tiam_per_seed'] = {k : round(v,precision) for k,v in r['tiam_per_seed'].items()}
+                df_concat.at[i,'count_order_binding'] = {k : round(v,precision) for k,v in r['count_order_binding'].items()}
+                df_concat.at[i,'tiam_gt_color_per_seed'] = {k : round(v,precision) for k,v in r['tiam_gt_color_per_seed'].items()}
+
+        
         # print the score for the number of entities and colors
         print(f"Score for {'colored ' if colored else ''}{n_entities} entities")
         print(df_concat.to_markdown())
