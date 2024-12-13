@@ -32,47 +32,38 @@ To evaluate a VLM the general workflow consists to:
 * generate several images per prompt with the VLM and either put them in an appropriate directory or specify their path in a JSON file
 * evaluate with TIAM
 
-To create a dataset, you can use one of the configuration files provided in `src/tiam/data/` then run e.g
+To create a dataset, you can use one of the configuration files provided in `src/tiam/data/`. As a toy example, let create a dataset of prompts with 3 objects and 2 colors with [this configuration file](src/tiam/data/sample.yaml) and save it in `SAVE_DIR=tests/data/sample/dataset`
 
 ```
-tiam create-dataset --config-file src/tiam/data/sample.yaml --save-dir tests/data/sample
+tiam create-dataset --config-file src/tiam/data/sample.yaml --save-dir tests/data/sample/dataset
 ```
+The prompts are generated in 3 formats, including a human readable `SAVE_DIR/prompts.txt`. Let generate 4 images per prompt and save them in `tests/data/sample/images`. You can use any VLM of your choice by providing the prompts in `SAVE_DIR/prompts.txt` but the name of the image file must be `the_prompt_with_underscres.N.png`, where `N=0,1,2,3` (for 4 images per prompt).
 
- let first consider  folder `SAVE_DIR` with the following strucure:
+You can download the images generated for this toy example with Stable Diffusion v2 [here](TODO). Now your working directory looks like:
 
 ```bash
 <SAVE_DIR>
- |-- prompts.csv
- |-- prompts.txt
  |-- images/
      |-- the_first_prompt_with_objects_and_attributes.0.png
      |-- the_first_prompt_with_objects_and_attributes.1.png
      |-- the_first_prompt_with_objects_and_attributes.2.png
-         (...)
-     |-- the_first_prompt_with_objects_and_attributes.15.png
+     |-- the_first_prompt_with_objects_and_attributes.3.png
      |-- the_second_prompt_with_objects_and_attributes.0.png
          (...)
          (...)
-     |-- the_last_prompt_with_objects_and_attributes.15.png
+     |-- the_last_prompt_with_objects_and_attributes.3.png
  |-- dataset/
-```
-
-The directory `images/` contains the synthetic images created by your generative model. There are 16 images per prompt, each having a filename relating it to the prompt used to generate it. The file `prompt.csv` contain the prompts with a format explained [here](TODO). A sample of such file is provided for [2 object](tests/data/2_entities/prompts.csv).
-
-Then, let transform the prompt in the CSV file into a dataset that can be used by TIAM:
-
-```
-tiam create-dataset --config-file src/tiam/data/2_colored_entities.yaml --save-dir tests/data/2_colored_entities_dataset
-
+    |-- prompts.csv
+    |-- prompts.txt
+    |-- [Dataset] = 2 'json' files and one or several 'arrow' file(s)
 ```
 
 And get the perfomances with:
 
 ```
-tiam score --save-dir SAVE_DIR 
+tiam score --save-dir tests/data/sample/ 
 ```
-
-**note**: `images` can be replaced by a tarball or a JSON file as explained [here](TODO). There are also alternative to `prompt.csv` to define the prompts, as explained [here](TODO)
+It uses the default directories `SAVE_DIR/images` and `SAVE_DIR/dataset` but these last can be changed. As explained below, it exists several methods to configure tiam, both to create the dataset and compute the score.
 
 ## Detailled usage
 

@@ -1,6 +1,9 @@
 # models for detection and segmentation
 yolov8x-seg.pt
 
+# exclude tuto folders
+tests/data/sample/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

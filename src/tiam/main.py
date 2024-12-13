@@ -82,7 +82,7 @@ def score(
     if image_dir == Path("/dev/null"):
         image_dir = Path(save_dir).joinpath("images/")
     if dataset_path_or_url == Path("/dev/null"):
-        dataset_path_or_url = Path(save_dir).joinpath("dataset_300_samples/")
+        dataset_path_or_url = Path(save_dir).joinpath("dataset/")
 
     compute_tiam_score(
         save_dir=save_dir,
