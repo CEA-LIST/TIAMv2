@@ -10,13 +10,14 @@ def test_generate_dataset():
         app,
         [
             "create-dataset",
-            "--config-path",
+            "--config-file",
             "src/tiam/data/2_colored_entities.yaml",
-            "--save-path",
+            "--save-dir",
             "TO_DELETE_2_colored_entities_dataset",
         ],
     )
     assert result.exit_code == 0
+    # tiam create-dataset --config-file src/tiam/data/2_colored_entities.yaml --save-dir TO_DELETE_2_colored_entities_dataset
 
 
 def test_score_with_detection_wo_color():
@@ -103,6 +104,21 @@ def test_with_csv():
         ],
     )
     assert result.exit_code == 0
+
+    result = runner.invoke(
+        app,
+        [
+            "score",
+            "--save-dir",
+            "tests/data/2_entities",
+            "--image-dir",
+            "tests/data/2_entities/images",
+            "--dataset-path-or-url",
+            "tests/data/2_entities/prompts_without_adj.csv",
+        ],
+    )
+    assert result.exit_code == 0
+    # tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url tests/data/2_entities/prompts_without_adj.csv
 
 
 def test_score_with_dataset_on_hub():

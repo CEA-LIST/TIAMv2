@@ -28,25 +28,23 @@ def create_dataset(
     dataset.save_to_disk(save_dir)
 
     # save explicit prompt in a text file
-    with open(Path(save_dir).joinpath("prompts.txt"), 'w') as f:
-        for line in dataset['prompt']:
+    with open(Path(save_dir).joinpath("prompts.txt"), "w") as f:
+        for line in dataset["prompt"]:
             f.write(f"{line}\n")
     # save the corresponding CSV file
-    with open(Path(save_dir).joinpath("prompts.csv"), 'w') as f:
-        first_line="prompt,"
-        for e in dataset['labels_params'][0].keys():
-            first_line=first_line+e+','
-        for a in dataset['adjs_params'][0].keys():
-            first_line=first_line+a+','
+    with open(Path(save_dir).joinpath("prompts.csv"), "w") as f:
+        first_line = "prompt,"
+        for e in dataset["labels_params"][0].keys():
+            first_line = first_line + e + ","
+        for a in dataset["adjs_params"][0].keys():
+            first_line = first_line + a + ","
         f.write(f"{first_line[:-1]}\n")
-        for i in range(dataset.num_rows):
-            line='"'+dataset['prompt'][i]+'",'
-            for e in dataset['labels_params'][i].keys():
-                line=line+dataset['labels_params'][i][e]+','
-            for a in dataset['adjs_params'][i].keys():
-                line=line+dataset['adjs_params'][i][a]+','
-            f.write(f"{line}\n") # FIXME on garde dernière virgule?? sinon {line[:-1]}
+        for row in iter(dataset):
 
+            line = f'"{row["prompt"]},"'
+            line += f'{",".join(v for v in row["labels_params"].values())}'
+            line += f'{",".join(v for v in row["adjs_params"].values())}'
+            f.write(f"{line}\n")  # FIXME on garde dernière virgule?? sinon {line[:-1]}
 
 
 @app.command(
@@ -61,12 +59,19 @@ def score(
         typer.Option(
             help="Directory containing the synthetic images or json files with prompts and path (and seeds)"
         ),
-    ] = Path("/dev/null"),  # impossible default path
+    ] = Path(
+        "/dev/null"
+    ),  # impossible default path
     dataset_path_or_url: Annotated[
         Path, typer.Option(help="Path or URL to the dataset or CSV file")
-    ] = Path("/dev/null"),  # impossible default path
+    ] = Path(
+        "/dev/null"
+    ),  # impossible default path
     model_detect_segment: Annotated[
-        str, typer.Option(help="Path or URL to the model used for object detection and segmentation")
+        str,
+        typer.Option(
+            help="Path or URL to the model used for object detection and segmentation"
+        ),
     ] = "yolov8x-seg.pt",
     batch_size: Annotated[int, typer.Option(help="Batch size for processing")] = 32,
     detect_only: Annotated[
@@ -74,11 +79,11 @@ def score(
         typer.Option(help="Flag to indicate if only detection should be performed"),
     ] = False,
 ):
-    if image_dir==Path("/dev/null"):
-        image_dir=Path(save_dir).joinpath("images/")
-    if dataset_path_or_url==Path("/dev/null"):
-        dataset_path_or_url=Path(save_dir).joinpath("dataset_300_samples/")
- 
+    if image_dir == Path("/dev/null"):
+        image_dir = Path(save_dir).joinpath("images/")
+    if dataset_path_or_url == Path("/dev/null"):
+        dataset_path_or_url = Path(save_dir).joinpath("dataset_300_samples/")
+
     compute_tiam_score(
         save_dir=save_dir,
         dataset_path=dataset_path_or_url,
