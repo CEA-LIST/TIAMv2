@@ -41,7 +41,7 @@ def create_dataset(
         f.write(f"{first_line[:-1]}\n")
         for row in iter(dataset):
 
-            line = f'"{row["prompt"]},"'
+            line = f'"{row["prompt"]}",'
             line += f'{",".join(v for v in row["labels_params"].values())}'
             line += f'{",".join(v for v in row["adjs_params"].values())}'
             f.write(f"{line}\n")  # FIXME on garde dernière virgule?? sinon {line[:-1]}
