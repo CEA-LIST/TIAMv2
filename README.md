@@ -2,16 +2,10 @@
 
 TIAM is a metric to estimate the performance of a visual language model (VLM) in terms of alignment of the prompt with the generated images. It estimates to which extent the entites (objects) and their attributes specified in the prompt are actually visible in the synthetic images. The work was [published at WACV 2024](https://openaccess.thecvf.com/content/WACV2024/html/Grimal_TIAM_-_A_Metric_for_Evaluating_Alignment_in_Text-to-Image_Generation_WACV_2024_paper.html) and in a previous preprint on [![arxiv](https://img.shields.io/badge/arXiv-2307.05134-b31b1b.svg)](https://arxiv.org/abs/2307.05134).
 
-This repo is a refactoring that makes it easier to use, while the the [original code](https://github.com/grimalPaul/TIAM) focused on reproducind the experiments of the paper.
+This repo is a refactoring that makes it easier to use, while the the [original code](https://github.com/grimalPaul/TIAM) focused on reproducind the experiments of the paper. If you find this program useful for your research, please [cite it](#-citation)
 
-> <details>
-> Paul Grimal, Hervé Le Borgne, Olivier Ferret, Julien Tourille (2024) TIAM - A Metric for Evaluating Alignment in Text-to-Image Generation, WACV
->
-> <summary> Abstract </summary>
-> The progress in the generation of synthetic images has made it crucial to assess their quality. While several metrics have been proposed to assess the rendering of images, it is crucial for Text-to-Image (T2I) models, which generate images based on a prompt, to consider additional aspects such as to which extent the generated image matches the important content of the prompt. Moreover, although the generated images usually result from a random starting point, the influence of this one is generally not considered. In this article, we propose a new metric based on prompt templates to study the alignment between the content specified in the prompt and the corresponding generated images. It allows us to better characterize the alignment in terms of the type of the specified objects, their number, and their color. We conducted a study on several recent T2I models about various aspects. An additional interesting result we obtained with our approach is that image quality can vary drastically depending on the noise used as a seed for the images. We also quantify the influence of the number of concepts in the prompt, their order as well as their (color) attributes. Finally, our method allows us to identify some seeds that produce better images than others, opening novel directions of research on this understudied topic.
-> </details>
 
-## Install
+# Install
 
 Install with [uv](https://docs.astral.sh/uv//), that itself can be [installed with one line](https://docs.astral.sh/uv/getting-started/installation/).
 
@@ -24,7 +18,7 @@ tiam --help
 
 Future works will allow to install with `pip`
 
-## Usage
+# Usage
 
 To evaluate a VLM the general workflow consists to:
 
@@ -65,22 +59,22 @@ tiam score --save-dir tests/data/sample/
 ```
 It uses the default directories `SAVE_DIR/images` and `SAVE_DIR/dataset` but these last can be changed. As explained below, it exists several methods to configure tiam, both to create the dataset and compute the score.
 
-## Detailled usage
+# Usage details, options
 
-### Creating the prompt.csv file
+## Creating a Dataset
 
-entity must be different
-adj for each entity if adj
-
-### Create a Dataset
-
+### From a configuration file
 Create a dataset based on the provided configuration file and save it to the specified path.
 
 ```bash
-tiam create-dataset --config-file <config.yaml> --save-dir <SAVE_DIR>
+tiam create-dataset --config-file <config.yaml> --save-dir <SAVE_DIR>/dataset
 ```
+With:
+* `--config-file`: configuration file similar to those in `src/tiam/data/`
+* `--save-dir`: folder to save the created prompt dataset.
 
-Or available datasets on the hub:
+### From Huggingface
+Some datasets are available on the hub, in particular [for benchmarking](benchmarking.md)
 
 * `Paulgrim/2_entities`: 300 prompts with 2 entities
 * `Paulgrim/3_entities`: 300 prompts with 3 entities
@@ -89,16 +83,22 @@ Or available datasets on the hub:
 
 ```python
 from datasets import load_dataset
-
 dataset = load_dataset("Paulgrim/2_entities")
 ```
+To save them locally and get human readable `prompts.txt`:
+```python
+dataset.save_to_disk('bench/2_entities')
 
-#### Options
+with open("prompts_2_entities.txt", "w") as f:
+    for line in dataset['dataset']["prompt"]:
+        f.write(f"{line}\n")
+```
+### From a prompt.csv file
 
-* `--config-file`: Path to the configuration file for creating the dataset.
-* `--save-dir`: folder to save the created prompt dataset.
+entity must be different
+adj for each entity if adj
 
-### Compute TIAM Score
+## Compute TIAM Score
 
 Compute the TIAM score for the given images and dataset using the specified model.
 
@@ -106,7 +106,7 @@ Compute the TIAM score for the given images and dataset using the specified mode
 tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path-or-url <DATASET_PATH_OR_URL> --model-detect-segment <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only
 ```
 
-#### Options
+### Options
 
 * `--save-dir`: Directory where the results will be saved.
 * `--image-dir`: Directory containing the images to be scored.
@@ -115,7 +115,7 @@ tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path-or-url <
 * `--batch-size`: Batch size for processing (default: 32).
 * `--detect-only`: Flag to indicate if only detection should be performed.
 
-### Load Score Data
+## Load Score Data
 
 Load data from multiple JSON files, display it and save the results to the specified directory.
 
@@ -123,18 +123,12 @@ Load data from multiple JSON files, display it and save the results to the speci
 tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES>
 ```
 
-#### Options
+### Options
 
 * `--save-dir`: Directory where the results will be saved.
 * `--path-to-json-files`: Path to the directory containing JSON files to be loaded.
 
-## Commands
-
-* `create-dataset`: Create a dataset based on the provided configuration file and save it to the specified path.
-* `score`: Compute the TIAM score for the given images and dataset using the specified model.
-* `load-score`: Load data from multiple JSON files, display it and save the results to the specified directory.
-
-## Usage Example
+# Usage Example
 
 Examples command from the tests
 
@@ -155,20 +149,7 @@ score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entit
 
 ```
 
-## TODO
-
-* [ ] add support to pass a csv with prompt entity 1, entity 2, entity 3, color 1, color 2, color 3, transform it in the current format of dataset to iterate on it
-* [ ] Change the discriminator YOLO and Segmentation to
-  * [ ] VQA ?
-  * [ ] Grounding DINO + SAM ?
-
-## Ressources
-
-Metric vqa utilisable
-ajouter le vqa score en utilisant ce model en disciminator
-<https://github.com/linzhiqiu/t2v_metrics>
-
-## Citation
+# Citation
 
 ```bibtex
 @InProceedings{Grimal_2024_WACV,
@@ -181,6 +162,13 @@ ajouter le vqa score en utilisant ce model en disciminator
 }
 ```
 
-## Acknowledgments
+### Acknowledgments
 
 This work was granted access to the HPC resources of IDRIS under the allocation 2022-AD011014009 made by GENCI. This was also made possible by the use of the FactoryIA supercomputer, financially supported by the Ile-De-France Regional Council.
+
+# Future works
+* [ ] install with pip
+* [ ] add support to pass a csv with prompt entity 1, entity 2, entity 3, color 1, color 2, color 3, transform it in the current format of dataset to iterate on it
+* [ ] Change the discriminator YOLO and Segmentation to
+  * [ ] VQA with [this model](https://github.com/linzhiqiu/t2v_metrics)
+  * [ ] Grounding DINO + SAM 
