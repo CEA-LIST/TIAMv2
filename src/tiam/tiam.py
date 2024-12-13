@@ -319,7 +319,8 @@ def calculate_weighted_metrics(df, color=False, per_seed=True):
 
 def params_to_detect(row):
     entities = list(row["labels_params"].values())
-    if len(row["adjs_params"]) > 0:
+
+    if "adjs_params" in row and len(row["adjs_params"]) > 0:
         adjs = list(row["adj_apply_on"].keys())
         color_classes = {}
         for adj in adjs:
@@ -332,7 +333,11 @@ def params_to_detect(row):
 
 
 def clean_data(row):
-    for key in ["labels_params", "adjs_params", "adj_apply_on"]:
+    keys = ["labels_params"]
+    if "adjs_params" in row:
+        keys.append("adjs_params")
+        keys.append("adj_apply_on")
+    for key in keys:
         row[key] = {k: v for k, v in row[key].items() if v}
     return row
 
@@ -446,9 +451,6 @@ def compute_tiam_score(
     detect_only=False,
 ):
 
-    #! gérer le chargement des images avec un json prompt : [chemin image]
-    #! ou prompt : {seed : chemin image}
-
     images_dir = Path(image_dir)
     save_dir = Path(save_dir)
     save_dir_per_prompt = save_dir / "tiam_score_per_prompt"
@@ -476,7 +478,7 @@ def compute_tiam_score(
     elif dataset_path.suffix == ".csv":
         dataset = csv2dataset(dataset_path)
     else:
-        dataset = load_dataset(str(dataset_path))  # load from huggingface
+        dataset = load_dataset(str(dataset_path))["train"]  # load from huggingface
 
     pipeline = TIAM_per_prompt(
         save_dir=save_dir_per_prompt,

@@ -105,6 +105,25 @@ def test_with_csv():
     assert result.exit_code == 0
 
 
+def test_score_with_dataset_on_hub():
+    result = runner.invoke(
+        app,
+        [
+            "score",
+            "--save-dir",
+            "tests/data/2_entities",
+            "--image-dir",
+            "tests/data/2_entities/images",
+            "--dataset-path-or-url",
+            "Paulgrim/2_entities",
+        ],
+    )
+    assert result.exit_code == 0
+
+
+# tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url Paulgrim/2_entities
+
+
 def test_with_images_in_json():
     result = runner.invoke(
         app,

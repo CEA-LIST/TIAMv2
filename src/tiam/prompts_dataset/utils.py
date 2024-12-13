@@ -107,8 +107,6 @@ def generate_dataset(
     dataset = Dataset.from_dict(
         {
             "prompt": prompts,
-            "template": [template.template] * len(prompts),
-            "params": params,
             "labels_params": labels,
             "adjs_params": adjs,
             "adj_apply_on": [adj_apply_on] * len(prompts),
