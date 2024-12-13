@@ -65,8 +65,8 @@ def score(
     dataset_path_or_url: Annotated[
         Path, typer.Option(help="Path or URL to the dataset or CSV file")
     ] = Path("/dev/null"),  # impossible default path
-    model_path_or_url: Annotated[
-        str, typer.Option(help="Path or URL to the model")
+    model_detect_segment: Annotated[
+        str, typer.Option(help="Path or URL to the model used for object detection and segmentation")
     ] = "yolov8x-seg.pt",
     batch_size: Annotated[int, typer.Option(help="Batch size for processing")] = 32,
     detect_only: Annotated[
@@ -83,7 +83,7 @@ def score(
         save_dir=save_dir,
         dataset_path=dataset_path_or_url,
         image_dir=image_dir,
-        model_path_or_url=model_path_or_url,
+        model_path_or_url=model_detect_segment,
         batch_size=batch_size,
         detect_only=detect_only,
     )
