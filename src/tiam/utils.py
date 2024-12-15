@@ -156,7 +156,7 @@ def get_images(prompt, all_file_names, tar=None):
     files_with_prompt = [
         f
         for f in all_file_names
-        if processed_prompt in str(f if isinstance(f, Path) else Path(f).stem)
+        if processed_prompt + "_" in str(f if isinstance(f, Path) else Path(f).stem)
     ]
 
     if not files_with_prompt:
