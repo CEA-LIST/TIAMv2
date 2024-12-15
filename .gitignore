@@ -3,6 +3,7 @@ yolov8x-seg.pt
 
 # exclude tuto folders
 tests/data/sample/*
+bench/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
