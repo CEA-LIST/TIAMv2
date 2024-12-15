@@ -163,7 +163,7 @@ def load_data_from_multiple_files(
         
         # print the score for the number of entities and colors
         print(f"Score for {'colored ' if colored else ''}{n_entities} entities")
-        print(df_concat.to_markdown())
+        print(df_concat.to_markdown(floatfmt="."+str(precision)+"f"))
         # save average score per data_type
         df_concat.to_json(
             save_dir
