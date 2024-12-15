@@ -2,8 +2,8 @@ We provide the scores of several models with fixed datasets of several types. Ea
 
 | model | 2 entities | 2 entities+colors| 3 entities  | 3 entites+colors|
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| SD 1.4 | 44.7 | | | |
-| SD 2.0 | 64.2 | | | |
+| [SD 1.4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | 44.7 | | | |
+| [SD 2](https://huggingface.co/stabilityai/stable-diffusion-2) | 64.2 | | | |
 
 # 2 entities
 * Get dataset and save the prompts in a text file `bench/2_entities/prompts.txt`. See [here](../README.md#from-huggingface) for the corresponding code.
