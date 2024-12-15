@@ -156,8 +156,9 @@ def load_data_from_multiple_files(
                 df_concat.at[i,'tiam'] = round(r['tiam'], precision)
                 df_concat.at[i,'count_order'] = {k : round(v,precision) for k,v in r['count_order'].items()}
                 df_concat.at[i,'tiam_per_seed'] = {k : round(v,precision) for k,v in r['tiam_per_seed'].items()}
-                df_concat.at[i,'count_order_binding'] = {k : round(v,precision) for k,v in r['count_order_binding'].items()}
-                df_concat.at[i,'tiam_gt_color_per_seed'] = {k : round(v,precision) for k,v in r['tiam_gt_color_per_seed'].items()}
+                if colored:
+                    df_concat.at[i,'count_order_binding'] = {k : round(v,precision) for k,v in r['count_order_binding'].items()}
+                    df_concat.at[i,'tiam_gt_color_per_seed'] = {k : round(v,precision) for k,v in r['tiam_gt_color_per_seed'].items()}
 
         
         # print the score for the number of entities and colors
