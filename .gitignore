@@ -2,7 +2,9 @@
 yolov8x-seg.pt
 
 # exclude tuto folders
-tests/data/sample/*
+tests/data/sample/dataset
+tests/data/sample/tiam_score_per_prompt/
+tests/data/sample/*.*
 bench/*
 
 # Byte-compiled / optimized / DLL files

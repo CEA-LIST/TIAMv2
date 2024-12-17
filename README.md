@@ -36,7 +36,7 @@ tiam create-dataset --config-file src/tiam/data/sample.yaml --save-dir tests/dat
 ```
 The prompts are generated in 3 formats, including a human readable `SAVE_DIR/prompts.txt`. Let generate 4 images per prompt and save them in `tests/data/sample/images`. You can use any VLM of your choice by providing the prompts in `SAVE_DIR/prompts.txt` but the name of the image file must be `the_prompt_with_underscres_N.png`, where `N=0,1,2,3` (for 4 images per prompt).
 
-You can download the images generated for this toy example with Stable Diffusion v2 [here](TODO). Now your working directory looks like:
+Images generated for this toy example with Stable Diffusion 1.4 are in [tests/data/sample/images](tests/data/sample/images). Now your working directory looks like:
 
 ```bash
 <SAVE_DIR>
