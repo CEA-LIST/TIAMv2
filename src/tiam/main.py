@@ -6,6 +6,8 @@ from typing_extensions import Annotated
 from .prompts_dataset.utils import create_dataset as pipeline_dataset
 from .tiam import compute_tiam_score, csv2dataset, load_data_from_multiple_files
 
+from datasets import load_dataset
+
 app = typer.Typer(
     name="tiam",
     help="Tool for computing the TIAM score for images and datasets.",
@@ -131,3 +133,27 @@ def csv_to_dataset(
     print(dataset)
     for row in iter(dataset):
         print(row)
+
+@app.command(help="download prompt dataset from Huggingface")
+def get_hub_dataset(
+    dataset_name: Annotated[
+        str,
+        typer.Option(help="name of the prompt dataset on Huggingface"),
+    ],
+    save_dir: Annotated[
+        Path, typer.Option(help="folder where the dataset will be saved")
+    ] = None,
+):
+    if dataset_name in ['Paulgrim/2_entities',
+                        'Paulgrim/3_entities',
+                        'Paulgrim/2_colored_entities',
+                        'Paulgrim/3_colored_entities']:
+        dataset = load_dataset(dataset_name)
+        dataset['dataset']=dataset.pop('train')
+        dataset.save_to_disk(save_dir)
+
+        with open(save_dir.joinpath("prompts.txt"), "w") as f:
+            for line in dataset['dataset']["prompt"]:
+                f.write(f"{line}\n")
+    else:
+        print(f'!!! unknown prompt dataset ({dataset_name})')

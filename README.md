@@ -77,24 +77,14 @@ With:
 ### From Huggingface
 Some datasets are available on the hub, in particular [for benchmarking](benchmarking.md)
 
-* `Paulgrim/2_entities`: 300 prompts with 2 entities
-* `Paulgrim/3_entities`: 300 prompts with 3 entities
-* `Paulgrim/2_colored_entities`: 300 prompts with 2 entities and 2 colors
-* `Paulgrim/3_colored_entities`: 300 prompts with 3 entities and 3 colors
 
-```python
-from datasets import load_dataset
-dataset = load_dataset("Paulgrim/2_entities")
+```bash
+tiam get-hub-dataset --dataset-name "Paulgrim/2_entities" --save-dir <SAVE_DIR>
+tiam get-hub-dataset --dataset-name "Paulgrim/2_colored_entities" --save-dir <SAVE_DIR>
+tiam get-hub-dataset --dataset-name "Paulgrim/3_entities" --save-dir <SAVE_DIR>
+tiam get-hub-dataset --dataset-name "Paulgrim/3_colored_entities" --save-dir <SAVE_DIR>
 ```
-To save them locally and get human readable `prompts.txt`:
-```python
-dataset['dataset']=dataset.pop('train')
-dataset.save_to_disk('bench/2_entities')
 
-with open("bench/2_entities/prompts.txt", "w") as f:
-    for line in dataset['dataset']["prompt"]:
-        f.write(f"{line}\n")
-```
 ### From a prompt.csv file
 
 Implemented. TODO: documentation (here)
