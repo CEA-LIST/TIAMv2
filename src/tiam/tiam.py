@@ -459,7 +459,7 @@ def compute_tiam_score(
     save_dir,
     dataset_path,
     image_dir,
-    model_path_or_url="yolov8x-seg.pt",
+    model_path="yolov8x-seg.pt",
     batch_size=32,
     detect_only=False,
 ):
@@ -495,7 +495,7 @@ def compute_tiam_score(
 
     pipeline = TIAM_per_prompt(
         save_dir=save_dir_per_prompt,
-        model_path=model_path_or_url,
+        model_path=model_path,
         batch_size=batch_size,
         confs_for_score=[0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95],
     )

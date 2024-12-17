@@ -29,7 +29,7 @@ def test_score_with_detection_wo_color():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/images",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_entities/dataset_300_samples",
         ],
     )
@@ -45,7 +45,7 @@ def test_score_with_detection_w_color():
             "tests/data/2_colored_entities",
             "--image-dir",
             "tests/data/2_colored_entities/images",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_colored_entities/dataset_300_samples",
         ],
     )
@@ -99,7 +99,7 @@ def test_with_csv():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/images",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_entities/prompts.csv",
         ],
     )
@@ -113,12 +113,12 @@ def test_with_csv():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/images",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_entities/prompts_without_adj.csv",
         ],
     )
     assert result.exit_code == 0
-    # tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url tests/data/2_entities/prompts_without_adj.csv
+    # tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path tests/data/2_entities/prompts_without_adj.csv
 
 
 def test_score_with_dataset_on_hub():
@@ -130,14 +130,14 @@ def test_score_with_dataset_on_hub():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/images",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "Paulgrim/2_entities",
         ],
     )
     assert result.exit_code == 0
 
 
-# tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url Paulgrim/2_entities
+# tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path Paulgrim/2_entities
 
 
 def test_with_images_in_json():
@@ -149,7 +149,7 @@ def test_with_images_in_json():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/json_with_list.json",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_entities/prompts.csv",
         ],
     )
@@ -163,7 +163,7 @@ def test_with_images_in_json():
             "tests/data/2_entities",
             "--image-dir",
             "tests/data/2_entities/json_per_seed.json",
-            "--dataset-path-or-url",
+            "--dataset-path",
             "tests/data/2_entities/prompts.csv",
         ],
     )

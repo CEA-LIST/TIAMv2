@@ -22,7 +22,7 @@ Future works will allow to install with `pip`
 
 To evaluate a VLM the general workflow consists to:
 
-* create a dataset of prompts or use [an existing one](doc/benchmarking.md)
+* create a dataset of prompts with TIAM or use [an existing one](doc/benchmarking.md)
 * generate several images per prompt with a VLM 
 * link the prompts to the images for TIAM
 * evaluate with TIAM
@@ -45,7 +45,7 @@ Images generated for this toy example with Stable Diffusion 1.4 are in [tests/da
      ├── the_first_prompt_with_objects_and_attributes_1.png
      ├── the_first_prompt_with_objects_and_attributes_2.png
      ├── the_first_prompt_with_objects_and_attributes_3.png
-      the_second_prompt_with_objects_and_attributes.0.png
+     └── the_second_prompt_with_objects_and_attributes.0.png
          (...)
          (...)
      └── the_last_prompt_with_objects_and_attributes_3.png
@@ -150,20 +150,17 @@ You can specify the exact image path for all the prompt in a JSON file with arra
 Compute the TIAM score for the given images and dataset using the specified model.
 
 ```bash
-tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path-or-url <DATASET_PATH_OR_URL> --model-detect-segment <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only
+tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path <DATASET_PATH_OR_URL> --model-detect-segment <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only
 ```
 
 Where:
 
 * `--save-dir`: Directory where the results will be saved.
 * `--image-dir`: Directory containing the images to be scored.
-* `--dataset-path-or-url`: Path or URL to the dataset or csv
-* `--model-detect-segment`: Path or URL to the model (default: "yolov8x-seg.pt").
+* `--dataset-path`: Path or URL to the dataset or csv
+* `--model-detect-segment`: Path or URL to the model (default: "yolov8x-seg.pt"). TIAM downloads the default Yolo detection/segmentation model at first usage
 * `--batch-size`: Batch size for processing (default: 32).
-* `--detect-only`: Flag to indicate if only detection should be performed.
-
-Note:
-* TIAM download the detection/segmenttion model at first usage
+* `--detect-only`: Flag to indicate if only detection should be performed. In that case, a list of JSON file is created and can further be agregated with `tiam load-score` (see below)
 
 ## Load Score Data
 
@@ -185,7 +182,7 @@ Examples command from the tests
 ```bash
 tiam create-dataset --config-file src/tiam/data/2_colored_entities.yaml --save-dir tests/data/2_colored_entities_dataset
 
-tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path-or-url tests/data/2_entities/dataset_300_samples
+tiam score --save-dir tests/data/2_entities --image-dir tests/data/2_entities/images --dataset-path tests/data/2_entities/dataset_300_samples
 
 tiam load-score --save-dir tests/data/load_score/images_and_seed_consistent --path-to-json-files tests/data/load_score/images_and_seed_consistent/tiam_score_per_prompt
 
@@ -193,8 +190,8 @@ tiam load-score --save-dir tests/data/load_score/images_and_seed_consistent --pa
 
 # with JSON files
 
-score    --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_with_list.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
-score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_per_seed.json    --dataset-path-or-url    tests/data/2_entities/prompts.csv
+score    --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_with_list.json    --dataset-path    tests/data/2_entities/prompts.csv
+score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entities/json_per_seed.json    --dataset-path    tests/data/2_entities/prompts.csv
 
 
 ```

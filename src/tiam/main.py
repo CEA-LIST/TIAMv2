@@ -64,7 +64,7 @@ def score(
     ] = Path(
         "/dev/null"
     ),  # impossible default path
-    dataset_path_or_url: Annotated[
+    dataset_path: Annotated[
         Path, typer.Option(help="Path or URL to the dataset or CSV file")
     ] = Path(
         "/dev/null"
@@ -83,14 +83,14 @@ def score(
 ):
     if image_dir == Path("/dev/null"):
         image_dir = Path(save_dir).joinpath("images/")
-    if dataset_path_or_url == Path("/dev/null"):
-        dataset_path_or_url = Path(save_dir).joinpath("dataset/")
+    if dataset_path == Path("/dev/null"):
+        dataset_path = Path(save_dir).joinpath("dataset/")
 
     compute_tiam_score(
         save_dir=save_dir,
-        dataset_path=dataset_path_or_url,
+        dataset_path=dataset_path,
         image_dir=image_dir,
-        model_path_or_url=model_detect_segment,
+        model_path=model_detect_segment,
         batch_size=batch_size,
         detect_only=detect_only,
     )
