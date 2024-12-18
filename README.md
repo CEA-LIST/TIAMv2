@@ -85,11 +85,6 @@ tiam get-hub-dataset --dataset-name "Paulgrim/3_entities" --save-dir <SAVE_DIR>
 tiam get-hub-dataset --dataset-name "Paulgrim/3_colored_entities" --save-dir <SAVE_DIR>
 ```
 
-### From a prompt.csv file
-
-Implemented. TODO: documentation (here)
-
-
 ## Compute TIAM Score
 ### Linking images to prompt
 Several methods can be used to let TIAM know which synthetic images correspond to each prompt of the dataset.
@@ -212,10 +207,3 @@ score   --save-dir    tests/data/2_entities    --image-dir    tests/data/2_entit
 ### Acknowledgments
 
 This work was granted access to the HPC resources of IDRIS under the allocation 2022-AD011014009 made by GENCI. This was also made possible by the use of the FactoryIA supercomputer, financially supported by the Ile-De-France Regional Council.
-
-# Future works
-* [ ] install with pip
-* [ ] add support to pass a csv with prompt entity 1, entity 2, entity 3, color 1, color 2, color 3, transform it in the current format of dataset to iterate on it
-* [ ] Change the discriminator YOLO and Segmentation to
-  * [ ] VQA with [this model](https://github.com/linzhiqiu/t2v_metrics)
-  * [ ] Grounding DINO + SAM 
