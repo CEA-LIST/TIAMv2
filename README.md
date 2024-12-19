@@ -2,7 +2,7 @@
 
 TIAM is a metric to estimate the performance of a visual language model (VLM) in terms of alignment of the prompt with the generated images. It estimates to which extent the entites (objects) and their attributes specified in the prompt are actually visible in the synthetic images. The work was [published at WACV 2024](https://openaccess.thecvf.com/content/WACV2024/html/Grimal_TIAM_-_A_Metric_for_Evaluating_Alignment_in_Text-to-Image_Generation_WACV_2024_paper.html) and in a previous preprint on [![arxiv](https://img.shields.io/badge/arXiv-2307.05134-b31b1b.svg)](https://arxiv.org/abs/2307.05134).
 
-This repo is a refactoring that makes it easier to use, while the the [original code](https://github.com/grimalPaul/TIAM) focused on reproducind the experiments of the paper. If you find this program useful for your research, please [cite it](#-citation)
+This repo is a refactoring that makes it easier to use, while the the [original code](https://github.com/grimalPaul/TIAM) focused on reproducind the experiments of the paper. If you find this program useful for your research, please [cite it](#citation)
 
 
 # Install
