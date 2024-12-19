@@ -75,7 +75,7 @@ With:
 * `--save-dir`: folder to save the created prompt dataset.
 
 ### From Huggingface
-Some datasets are available on the hub, in particular [for benchmarking](benchmarking.md)
+Some datasets are available on the hub, in particular [for benchmarking](doc/benchmarking.md)
 
 
 ```bash
@@ -151,8 +151,8 @@ tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path <DATASET
 Where:
 
 * `--save-dir`: Directory where the results will be saved.
-* `--image-dir`: Directory containing the images to be scored. It can also be a tar file that contains the images directly.
-* `--dataset-path`: Path or URL to the dataset or csv
+* `--image-dir`: Directory containing the images to be scored. It can also be a tar file that contains the images directly. Default: `<SAVE_DIR>/images`
+* `--dataset-path`: Path or URL to the (arrow) dataset directory. Not necessary if it is in `<SAVE_DIR>/dataset` (could be a symbolic link)
 * `--model-detect-segment`: Path or URL to the model (default: "yolov8x-seg.pt"). TIAM downloads the default Yolo detection/segmentation model at first usage
 * `--batch-size`: Batch size for processing (default: 32).
 * `--detect-only`: Flag to indicate if only detection should be performed. In that case, a list of JSON file is created and can further be agregated with `tiam load-score` (see below)
