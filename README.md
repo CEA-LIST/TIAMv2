@@ -151,7 +151,7 @@ tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path <DATASET
 Where:
 
 * `--save-dir`: Directory where the results will be saved.
-* `--image-dir`: Directory containing the images to be scored.
+* `--image-dir`: Directory containing the images to be scored. It can also be a tar file that contains the images directly.
 * `--dataset-path`: Path or URL to the dataset or csv
 * `--model-detect-segment`: Path or URL to the model (default: "yolov8x-seg.pt"). TIAM downloads the default Yolo detection/segmentation model at first usage
 * `--batch-size`: Batch size for processing (default: 32).
