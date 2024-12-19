@@ -478,7 +478,7 @@ def compute_tiam_score(
     elif images_dir.is_file() and images_dir.suffix == ".tar":
         with tarfile.open(images_dir, "r") as tar:
             tar = tarfile.open(images_dir, "r")
-            all_file_names = [tar.getnames()]
+            all_file_names = tar.getnames()
     elif images_dir.suffix == ".json":
         with open(images_dir, "r") as f:
             json_files = json.load(f)
