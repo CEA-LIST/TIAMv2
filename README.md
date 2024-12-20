@@ -4,7 +4,6 @@ TIAM is a metric to estimate the performance of a visual language model (VLM) in
 
 This repo is a refactoring that makes it easier to use, while the the [original code](https://github.com/grimalPaul/TIAM) focused on reproducind the experiments of the paper. If you find this program useful for your research, please [cite it](#citation)
 
-
 # Install
 
 Install with [uv](https://docs.astral.sh/uv//), that itself can be [installed with one line](https://docs.astral.sh/uv/getting-started/installation/).
@@ -23,7 +22,7 @@ Future works will allow to install with `pip`
 To evaluate a VLM the general workflow consists to:
 
 * create a dataset of prompts with TIAM or use [an existing one](doc/benchmarking.md)
-* generate several images per prompt with a VLM 
+* generate several images per prompt with a VLM
 * link the prompts to the images for TIAM
 * evaluate with TIAM
 
@@ -34,6 +33,7 @@ To create a dataset, you can use one of the configuration files provided in `src
 ```
 tiam create-dataset --config-file src/tiam/data/sample.yaml --save-dir tests/data/sample/dataset
 ```
+
 The prompts are generated in 3 formats, including a human readable `SAVE_DIR/prompts.txt`. Let generate 4 images per prompt and save them in `tests/data/sample/images`. You can use any VLM of your choice by providing the prompts in `SAVE_DIR/prompts.txt` but the name of the image file must be `the_prompt_with_underscres_N.png`, where `N=0,1,2,3` (for 4 images per prompt).
 
 Images generated for this toy example with Stable Diffusion 1.4 are in [tests/data/sample/images](tests/data/sample/images). Now your working directory looks like:
@@ -60,23 +60,27 @@ And get the perfomances with:
 ```
 tiam score --save-dir tests/data/sample/ 
 ```
+
 It uses the default directories `SAVE_DIR/images` and `SAVE_DIR/dataset` but these last can be changed. As explained below, it exists several methods to configure tiam, both to create the dataset and compute the score.
 
 ## Creating a Dataset
 
 ### From a configuration file
+
 Create a dataset based on the provided configuration file and save it to the specified path.
 
 ```bash
 tiam create-dataset --config-file <config.yaml> --save-dir <SAVE_DIR>/dataset
 ```
+
 With:
+
 * `--config-file`: configuration file similar to those in `src/tiam/data/`
 * `--save-dir`: folder to save the created prompt dataset.
 
 ### From Huggingface
-Some datasets are available on the hub, in particular [for benchmarking](doc/benchmarking.md)
 
+Some datasets are available on the hub, in particular [for benchmarking](doc/benchmarking.md)
 
 ```bash
 tiam get-hub-dataset --dataset-name "Paulgrim/2_entities" --save-dir <SAVE_DIR>
@@ -86,10 +90,13 @@ tiam get-hub-dataset --dataset-name "Paulgrim/3_colored_entities" --save-dir <SA
 ```
 
 ## Compute TIAM Score
+
 ### Linking images to prompt
+
 Several methods can be used to let TIAM know which synthetic images correspond to each prompt of the dataset.
 
 #### Unique repository and constrained image filename
+
 You can put all the synthetic images in a unique directory and use `--image-dir` to give it ti TIAM. However, the name of the image files must have a strict pattern namely the prompt (low case, with spaces replaced by underscores) followed by `_n.ext` where `n` is a number between 0 and N-1 (il you generate N image per prompt) and `ext` is the file extension (jpg,png...)
 
 <details>
@@ -116,6 +123,7 @@ a_photo_of_a_bicycle_and_a_bench_1.png
 You can use symbolic link named as expected by TIAM with `ln -s ...`
 
 #### Using a JSON file
+
 You can specify the exact image path for all the prompt in a JSON file with arrays. The name of the array is the prompt (str) and the values are the path to the images (str).
 
 <details>
@@ -169,6 +177,7 @@ tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES>
 
 * `--save-dir`: Directory where the results will be saved.
 * `--path-to-json-files`: Path to the directory containing JSON files to be loaded.
+* `--conf`: Display scores only with confidence above this value. Available options: `[0.25, 0.3, 0.4, 0.5,0.6, 0.7, 0.8, 0.9, 0.95]`. if not specified, all scores are displayed.
 
 # Usage Example
 

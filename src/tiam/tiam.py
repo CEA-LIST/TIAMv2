@@ -47,7 +47,8 @@ def load_data_from_multiple_files(
     path_to_json_files,
     save_dir: Optional[str] = None,
     files=None,
-    precision: Optional[int]=3,
+    precision: Optional[int] = 3,
+    conf: Optional[float] = None,
 ):
     """Load the data from the json files and save the results in a json file and markdown files
 
@@ -76,9 +77,6 @@ def load_data_from_multiple_files(
             else:
                 type_data[(colored, n_entities)].append(df_temp)
 
-            # check si color ou non, il faudra calcuelr le score uniquement pour ceux ou il y a a couleur
-            # concatenate the data
-            # all_scores.append(pd.read_json(f))
         except Exception as e:
             print(f"Error with {f}: {e}")
     # create conctenate dataframe per type of prompt
@@ -151,19 +149,35 @@ def load_data_from_multiple_files(
         # average number of class detected per image
         df_concat["n_class_detected"] = df_concat["n_class_detected"] * n_entities
         # round the scores
-        if precision>0:
+        if precision > 0:
             for i, r in df_concat.iterrows():
-                df_concat.at[i,'tiam'] = round(r['tiam'], precision)
-                df_concat.at[i,'count_order'] = {k : round(v,precision) for k,v in r['count_order'].items()}
-                df_concat.at[i,'tiam_per_seed'] = {k : round(v,precision) for k,v in r['tiam_per_seed'].items()}
+                df_concat.at[i, "tiam"] = round(r["tiam"], precision)
+                df_concat.at[i, "count_order"] = {
+                    k: round(v, precision) for k, v in r["count_order"].items()
+                }
+                df_concat.at[i, "tiam_per_seed"] = {
+                    k: round(v, precision) for k, v in r["tiam_per_seed"].items()
+                }
                 if colored:
-                    df_concat.at[i,'count_order_binding'] = {k : round(v,precision) for k,v in r['count_order_binding'].items()}
-                    df_concat.at[i,'tiam_gt_color_per_seed'] = {k : round(v,precision) for k,v in r['tiam_gt_color_per_seed'].items()}
+                    df_concat.at[i, "count_order_binding"] = {
+                        k: round(v, precision)
+                        for k, v in r["count_order_binding"].items()
+                    }
+                    df_concat.at[i, "tiam_gt_color_per_seed"] = {
+                        k: round(v, precision)
+                        for k, v in r["tiam_gt_color_per_seed"].items()
+                    }
 
-        
         # print the score for the number of entities and colors
         print(f"Score for {'colored ' if colored else ''}{n_entities} entities")
-        print(df_concat.to_markdown(floatfmt="."+str(precision)+"f"))
+        if conf is not None and conf in df_concat["conf"].values:
+            print(
+                df_concat[df_concat["conf"] == conf].to_markdown(
+                    floatfmt="." + str(precision) + "f"
+                )
+            )
+        else:
+            print(df_concat.to_markdown(floatfmt="." + str(precision) + "f"))
         # save average score per data_type
         df_concat.to_json(
             save_dir
@@ -177,8 +191,6 @@ def load_data_from_multiple_files(
 
     # Compute TIAM score without regards on the number of entities
     # weighted compute on the number of prompt
-
-    # rechecker que les mêmes seeds et les mêmes confidences utilisés
 
     if len(df_resume["color"]) > 1:
         per_seed_available = True
@@ -497,7 +509,7 @@ def compute_tiam_score(
         save_dir=save_dir_per_prompt,
         model_path=model_path,
         batch_size=batch_size,
-        confs_for_score=[0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95],
+        confs_for_score=[0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95],
     )
 
     unavailable_prompts = []
