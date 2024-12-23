@@ -18,7 +18,7 @@ tiam get-hub-dataset --dataset-name "Paulgrim/3_colored_entities" --save-dir "be
 
 The 300 prompts are explicit in `<SAVE_DIR>/prompts.txt`. Let generate 16 images (size 512x512 is enough) per prompt with your VLM and save them in `bench/2_entities/images/`. Name them `prompt_with_underscore.nos_img.png` (it is [one of the possible methods](../README.md#linking-images-to-prompt) to link prompts and images to compute TIAM). Finally, you can run TIAM:
 
-```
+```bash
 tiam score --save-dir bench/2_entities/ \
            --image-dir  bench/2_entities/images/ \
            --batch-size 16
@@ -31,6 +31,13 @@ At a **threshold of 0.25**, the TIAM scores are around:
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | [SD 1.4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | 44.7 | 20.7 | 8.3 | 1.9 |
 | [SD 2](https://huggingface.co/stabilityai/stable-diffusion-2) | 64.2 | 41.7 | 21.2 | 7.7 |
+| A&E (SD 1.4) | 70.1 | 48.7 | 27.9 | 10.2 |
+| A&E (SD 2) | 69.3 | 48.4 | 30.2 | 10.7 |
+
+
+
+* actual score may depend on the hyperparameters used. These results were obtained with, among others, a *float16* procision and a *DPMSolverMultistepScheduler*
+* A&E is [attend and excite](https://github.com/yuval-alaluf/Attend-and-Excite) with the given Stable Diffusion backbone. The results with SD 2 are sometimes lower than with SD 1.4 because no token has been released from the prompt (removing the last one may boost the score)
 
 # Notes
 To get the image filenames from the prompt you can use:
