@@ -1,12 +1,11 @@
 from pathlib import Path
 
 import typer
+from datasets import load_dataset
 from typing_extensions import Annotated
 
 from .prompts_dataset.utils import create_dataset as pipeline_dataset
 from .tiam import compute_tiam_score, csv2dataset, load_data_from_multiple_files
-
-from datasets import load_dataset
 
 app = typer.Typer(
     name="tiam",
@@ -109,13 +108,22 @@ def load_score(
     ],
     disp_precision: Annotated[
         int,
-        typer.Option(help="Round the displayed results to 1e-disp_precision. Do not round if disp_precision<=0. Default = 3"),
+        typer.Option(
+            help="Round the displayed results to 1e-disp_precision. Do not round if disp_precision<=0. Default = 3"
+        ),
     ] = 3,
+    conf: Annotated[
+        float,
+        typer.Option(
+            help="Display scores only with confidence above this value. Available options: [0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]"
+        ),
+    ] = None,
 ):
     load_data_from_multiple_files(
         save_dir=save_dir,
         path_to_json_files=path_to_json_files,
         precision=disp_precision,
+        conf=conf,
     )
 
 
@@ -144,16 +152,18 @@ def get_hub_dataset(
         Path, typer.Option(help="folder where the dataset will be saved")
     ] = None,
 ):
-    if dataset_name in ['Paulgrim/2_entities',
-                        'Paulgrim/3_entities',
-                        'Paulgrim/2_colored_entities',
-                        'Paulgrim/3_colored_entities']:
+    if dataset_name in [
+        "Paulgrim/2_entities",
+        "Paulgrim/3_entities",
+        "Paulgrim/2_colored_entities",
+        "Paulgrim/3_colored_entities",
+    ]:
         dataset = load_dataset(dataset_name)
-        dataset['dataset']=dataset.pop('train')
+        dataset["dataset"] = dataset.pop("train")
         dataset.save_to_disk(save_dir)
 
         with open(save_dir.joinpath("prompts.txt"), "w") as f:
-            for line in dataset['dataset']["prompt"]:
+            for line in dataset["dataset"]["prompt"]:
                 f.write(f"{line}\n")
     else:
-        print(f'!!! unknown prompt dataset ({dataset_name})')
+        print(f"!!! unknown prompt dataset ({dataset_name})")

@@ -1,12 +1,14 @@
 We provide the scores of several models with fixed datasets of several types. Each dataset is restricted to at most 300 prompts to limit the computation time, including to generate the images. In practice, we verified that the relative order of the VLM performance is the same as when one uses all possible prompts for the given number of entities and attributes. TIAM scores are computed with 16 images per prompt.
 
 Available datasets are:
+
 * `Paulgrim/2_entities`: 300 prompts with 2 entities (without attribute)
 * `Paulgrim/3_entities`: 300 prompts with 3 entities (without attribute)
 * `Paulgrim/2_colored_entities`: 300 prompts with 2 entities, each with a color attribute
 * `Paulgrim/3_colored_entities`: 300 prompts with 3 entities, each with a color attribute
 
 To get them, let use [this method](../README.md#from-huggingface):
+
 ```bash
 tiam get-hub-dataset --dataset-name "Paulgrim/2_entities" --save-dir "bench/2_entities/"
 tiam get-hub-dataset --dataset-name "Paulgrim/2_colored_entities" --save-dir "bench/2_colored_entities/"
@@ -32,6 +34,7 @@ At a **threshold of 0.25**, the TIAM scores are around:
 
 # Notes
 To get the image filenames from the prompt you can use:
+
 ```python
 >>> prompt="a photo of a cat and a car"
 >>> nos_img=2                                       
@@ -130,6 +133,7 @@ After downloading the datasets, they are in "arrow format" in `<SAVE_DIR>/datase
 </details>
 
 And we used the following commands to get the TIAM scores:
+
 ```bash
 export PATH2DIR="bench/2_entities" # or "bench/2_colored_entities" or ...
 
@@ -140,4 +144,13 @@ tiam score --save-dir ${PATH2DIR}/${model}/ \
            --image-dir ${PATH2DIR}/${model}/images.tar
 
 ```
+
 The resulting JSON files for each prompt are saved in `${PATH2DIR}/${model}/tiam_score_per_prompt/`
+
+To reload the computed scores you can use:
+
+```bash
+
+tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES> # --conf 0.25 If you want to display only scores with confidence above 0.25
+
+```
