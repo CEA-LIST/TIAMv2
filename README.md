@@ -44,7 +44,7 @@ Images generated for this toy example with Stable Diffusion 1.4 are in [tests/da
      ├── the_first_prompt_with_objects_and_attributes_1.png
      ├── the_first_prompt_with_objects_and_attributes_2.png
      ├── the_first_prompt_with_objects_and_attributes_3.png
-     └── the_second_prompt_with_objects_and_attributes.0.png
+     └── the_second_prompt_with_objects_and_attributes_0.png
          (...)
          (...)
      └── the_last_prompt_with_objects_and_attributes_3.png
