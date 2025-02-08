@@ -25,19 +25,19 @@ tiam score --save-dir bench/2_entities/ \
 ```
 
 # Results
-At a **threshold of 0.25**, the TIAM scores are around:
+At a **threshold of 0.25**, the TIAM scores are given in the table below. Score within prenthesis is the performance without taking into account the color specified in the prompt. The score may vary according to the random initialization.
 
 | model | 2 entities | 2 entities+colors| 3 entities  | 3 entites+colors|
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| [SD 1.4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | 44.7 | 20.7 | 8.3 | 1.9 |
-| [SD 2](https://huggingface.co/stabilityai/stable-diffusion-2) | 64.2 | 41.7 | 21.2 | 7.7 |
-| A&E (SD 1.4) | 70.1 | 48.7 | 27.9 | 10.2 |
-| A&E (SD 2) | 69.3 | 48.4 | 30.2 | 10.7 |
+| [SD 1.4](https://huggingface.co/CompVis/stable-diffusion-v1-4) | 44.7 | 3.6 (20.7) | 8.3 | 0.1 (1.9) |
+| [SD 2](https://huggingface.co/stabilityai/stable-diffusion-2) | 64.2 | 8.3 (41.7) | 21.2 | 0.2 (7.7) |
+| A&E (SD 1.4) | 70.1 | 10.4 (48.7) | 27.9 | 0.4 (10.2) |
+| A&E (SD 2) | 69.3 | 8.2 (48.4) | 30.2 | 0.3 (10.7) |
+| UGD_od (SD 1.4)| 36.9 | | 5.7 | |
 
 
 
-* actual score may depend on the hyperparameters used. These results were obtained with, among others, a *float16* procision and a *DPMSolverMultistepScheduler*
-* A&E is [attend and excite](https://github.com/yuval-alaluf/Attend-and-Excite) with the given Stable Diffusion backbone. The results with SD 2 are sometimes lower than with SD 1.4 because no token has been released from the prompt (removing the last one may boost the score)
+Actual score may depend on the hyperparameters used, [implementaiton details](#implementation-details).
 
 # Notes
 To get the image filenames from the prompt you can use:
@@ -161,3 +161,22 @@ To reload the computed scores you can use:
 tiam load-score --save-dir <SAVE_DIR> --path-to-json-files <PATH_TO_JSON_FILES> # --conf 0.25 If you want to display only scores with confidence above 0.25
 
 ```
+# Implementation details
+
+## Stable Diffusion (SD)
+For SD1.4 and SD2 we used a *float16* precision and a *DPMSolverMultistepScheduler* for 50 diffusion steps.
+
+## Attend and Excite (A&E)
+A&E is [attend and excite](https://github.com/yuval-alaluf/Attend-and-Excite) with the given Stable Diffusion backbone. The results with SD 2 are sometimes lower than with SD 1.4 because no token has been released from the prompt (removing the last one may boost the score)
+
+## Universal Guided Diffusion (UGD)
+UGD is [universal_guided_diffusion](https://github.com/arpitbansal297/Universal-Guided-Diffusion). 
+
+For **UGD_od** We used the model guided by a 2D box, that uses the `fasterrcnn_resnet50_fpn_v2` object detector. The main hyperparameters are:
+```
+--scale 2 --optim_forward_guidance --optim_num_steps 2 --optim_forward_guidance_wt 75 --optim_original_conditioning --ddim_steps 75 
+```
+The generation of one image takes ~5mn on a GPU P6000 and ~2mn on a A100. Using 100 DDIM steps did not change significantly the quality of images. For 2 objects, both boxes have a size of `170x170` and their centers are `(x,y)=(170,256)` and `(340,256)`. For 3 objets, the box size are `128x128` and their centers are `(160,170)`, `(288,340)` and `(416,170)`.
+
+
+
