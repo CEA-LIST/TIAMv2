@@ -33,7 +33,8 @@ At a **threshold of 0.25**, the TIAM scores are given in the table below. Score 
 | [SD 2](https://huggingface.co/stabilityai/stable-diffusion-2) | 64.2 | 8.3 (41.7) | 21.2 | 0.2 (7.7) |
 | A&E (SD 1.4) | 70.1 | 10.4 (48.7) | 27.9 | 0.4 (10.2) |
 | A&E (SD 2) | 69.3 | 8.2 (48.4) | 30.2 | 0.3 (10.7) |
-| UGD_od (SD 1.4)| 36.9 | | 5.7 | |
+| UGD_od_gen (SD 1.4)| 36.9 | | 5.7 | |
+| UGD_od_pdf (SD 1.4)| 32.0 | | 4.2 | |
 
 
 
@@ -172,11 +173,11 @@ A&E is [attend and excite](https://github.com/yuval-alaluf/Attend-and-Excite) wi
 ## Universal Guided Diffusion (UGD)
 UGD is [universal_guided_diffusion](https://github.com/arpitbansal297/Universal-Guided-Diffusion). 
 
-For **UGD_od** We used the model guided by a 2D box, that uses the `fasterrcnn_resnet50_fpn_v2` object detector. The main hyperparameters are:
+For **UGD_od_gen** We used the model guided by a 2D box, that uses the `fasterrcnn_resnet50_fpn_v2` object detector. The main hyperparameters are:
 ```
 --scale 2 --optim_forward_guidance --optim_num_steps 2 --optim_forward_guidance_wt 75 --optim_original_conditioning --ddim_steps 75 
 ```
 The generation of one image takes ~5mn on a GPU P6000 and ~2mn on a A100. Using 100 DDIM steps did not change significantly the quality of images. For 2 objects, both boxes have a size of `170x170` and their centers are `(x,y)=(170,256)` and `(340,256)`. For 3 objets, the box size are `128x128` and their centers are `(160,170)`, `(288,340)` and `(416,170)`.
 
-
+For **UGD_od_gen** we used the same model and options but the predefined boxes determined by a LLM.
 
