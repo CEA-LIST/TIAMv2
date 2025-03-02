@@ -80,6 +80,7 @@ class TIAM_per_prompt:
         prompt: str,
         color_classes: Dict[str, str] = None,
         seeds_used: Optional[List[int]] = None,
+        verbose: bool = False
     ):
         """Predict the classes in the images
 
@@ -126,6 +127,7 @@ class TIAM_per_prompt:
                 conf=self.min_conf_threshold,
                 imgsz=batch.shape[-2:],
                 device=self.device,
+                verbose=verbose,
             )
 
             for (idx_img, r), s in zip(enumerate(results), seeds):

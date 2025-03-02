@@ -149,7 +149,7 @@ You can specify the exact image path for all the prompt in a JSON file with arra
 Compute the TIAM score for the given images and dataset using the specified model.
 
 ```bash
-tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path <DATASET_PATH_OR_URL> --model-detect-segment <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only
+tiam score --save-dir <SAVE_DIR> --image-dir <IMAGE_DIR> --dataset-path <DATASET_PATH_OR_URL> --model-detect-segment <MODEL_PATH_OR_URL> --batch-size <BATCH_SIZE> --detect-only [--verbose]
 ```
 
 Where:
@@ -160,6 +160,7 @@ Where:
 * `--model-detect-segment`: Path or URL to the model (default: "yolov8x-seg.pt"). TIAM downloads the default Yolo detection/segmentation model at first usage
 * `--batch-size`: Batch size for processing (default: 32).
 * `--detect-only`: Flag to indicate if only detection should be performed. In that case, a list of JSON file is created and can further be agregated with `tiam load-score` (see below)
+* `--verbose`: to get details on the detections in each image
 
 ## Load Score Data
 

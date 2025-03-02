@@ -79,6 +79,10 @@ def score(
         bool,
         typer.Option(help="Flag to indicate if only detection should be performed"),
     ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option(help="Display details on detections for each image"),
+    ] = False,
 ):
     if image_dir == Path("/dev/null"):
         image_dir = Path(save_dir).joinpath("images/")
@@ -92,6 +96,7 @@ def score(
         model_path=model_detect_segment,
         batch_size=batch_size,
         detect_only=detect_only,
+        verbose=verbose
     )
 
 

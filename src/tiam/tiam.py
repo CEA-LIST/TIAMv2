@@ -474,6 +474,7 @@ def compute_tiam_score(
     model_path="yolov8x-seg.pt",
     batch_size=32,
     detect_only=False,
+    verbose=False,
 ):
 
     images_dir = Path(image_dir)
@@ -528,12 +529,15 @@ def compute_tiam_score(
             unavailable_prompts.append(prompt)
             continue
         entities, classes_per_color = params_to_detect(row)
+        if verbose:
+            print(f'[prompt] {prompt}')
         pipeline.predict(
             images=images,
             seeds_used=seeds,
             classes=entities,
             color_classes=classes_per_color,
             prompt=prompt,
+            verbose=verbose,
         )
     if len(unavailable_prompts) > 0:
         logger.info(
