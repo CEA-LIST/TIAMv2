@@ -37,7 +37,7 @@ At a **threshold of 0.25**, the TIAM scores are given in the table below. Score 
 
 
 
-Actual score may depend on the hyperparameters used, [implementaiton details](#implementation-details).
+Actual score may depend on the hyperparameters used, [implementation details](#implementation-details).
 
 # Notes
 To get the image filenames from the prompt you can use:
