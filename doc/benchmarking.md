@@ -1,9 +1,10 @@
 We provide the scores of several models with fixed datasets of several types. Each dataset is restricted to at most 300 prompts to limit the computation time, including to generate the images. In practice, we verified that the relative order of the VLM performance is the same as when one uses all possible prompts for the given number of entities and attributes. TIAM scores are computed with 16 images per prompt.
 
-Available datasets are:
+Available datasets [on huggingface](https://huggingface.co/Paulgrimal/datasets) are:
 
 * `Paulgrim/2_entities`: 300 prompts with 2 entities (without attribute)
 * `Paulgrim/3_entities`: 300 prompts with 3 entities (without attribute)
+* `Paulgrim/4_entities`: 300 prompts with 4 entities (without attribute)
 * `Paulgrim/2_colored_entities`: 300 prompts with 2 entities, each with a color attribute
 * `Paulgrim/3_colored_entities`: 300 prompts with 3 entities, each with a color attribute
 
@@ -14,6 +15,7 @@ tiam get-hub-dataset --dataset-name "Paulgrim/2_entities" --save-dir "bench/2_en
 tiam get-hub-dataset --dataset-name "Paulgrim/2_colored_entities" --save-dir "bench/2_colored_entities/"
 tiam get-hub-dataset --dataset-name "Paulgrim/3_entities" --save-dir "bench/3_entities/"
 tiam get-hub-dataset --dataset-name "Paulgrim/3_colored_entities" --save-dir "bench/3_colored_entities/"
+tiam get-hub-dataset --dataset-name "Paulgrim/4_entities" --save-dir "bench/4_entities/"
 ```
 
 The 300 prompts are explicit in `<SAVE_DIR>/prompts.txt`. Let generate 16 images (size 512x512 is enough) per prompt with your VLM and save them in `bench/2_entities/images/`. Name them `prompt_with_underscore.nos_img.png` (it is [one of the possible methods](../README.md#linking-images-to-prompt) to link prompts and images to compute TIAM). Finally, you can run TIAM:
