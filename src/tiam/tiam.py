@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from datasets import Dataset, load_dataset, load_from_disk
+from datasets import Dataset, DatasetDict, load_dataset, load_from_disk
 from rich.progress import track
 
 from .tiam_per_prompt import TIAM_per_prompt
@@ -501,6 +501,8 @@ def compute_tiam_score(
 
     if dataset_path.is_dir():
         dataset = load_from_disk(dataset_path)  # load from disk
+        if isinstance(dataset, DatasetDict):
+            dataset = dataset["train"]
     elif dataset_path.suffix == ".csv":
         dataset = csv2dataset(dataset_path)
     else:
